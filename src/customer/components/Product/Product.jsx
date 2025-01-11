@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
+import { useState } from "react";
 import {
   Dialog,
   DialogBackdrop,
@@ -31,7 +31,7 @@ import {
   Radio,
   RadioGroup,
 } from "@mui/material";
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 const sortOptions = [
   { name: "Price: Low to High", href: "#", current: false },
@@ -44,31 +44,31 @@ function classNames(...classes) {
 
 export default function Product() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const location = useLocation()
-  const nevigate = useLocation()
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const handleFilter=(value,sectionId)=>{
-    const searchParams = new URLSearchParams(location.search)
-    let filterValue=searchParams.getAll(sectionId)
-    
-    if(filterValue.length>0 && filterValue[0].split(",").includes(value)){
-      filterValue=filterValue[0].split(",").filter((item)=>item!==value);
+  const handleFilter = (value, sectionId) => {
+    const useSearchParams = new URLSearchParams(location.search);
+    let filterValue = useSearchParams.getAll(sectionId);
 
-      if(filterValue.length==0){
-        searchParams.delete(sectionId)
+    if (filterValue.length > 0 && filterValue[0].split(",").includes(value)) {
+      filterValue = filterValue[0].split(",").filter((item) => item !== value);
+
+      if (filterValue.length === 0) {
+        useSearchParams.delete(sectionId);
       }
-    }
-    else{
-      filterValue.push(value)
+    } else {
+      filterValue.push(value);
     }
 
-    if(filterValue.length>0){
-      searchParams.set(sectionId, filterValue.join(","));
-      const query= searchParams.toString();
-      Navigate({search:'?${query}'})
+    if (filterValue.length > 0) {
+      useSearchParams.set(sectionId, filterValue.join(","));
     }
-    
-  }
+
+    const query = useSearchParams.toString();
+    navigate({ search: `?${query}` }); // Fixed template string interpolation
+  };
+
 
 
   return (
@@ -134,6 +134,7 @@ export default function Product() {
                             <div className="flex h-5 shrink-0 items-center">
                               <div className="group grid size-4 grid-cols-1">
                                 <input
+                                  onChange={()=>handleFilter(option.value,section.id)}
                                   defaultValue={option.value}
                                   id={`filter-mobile-${section.id}-${optionIdx}`}
                                   name={`${section.id}[]`}
@@ -318,14 +319,11 @@ export default function Product() {
               {/* Filters */}
               <div>
                 <div className="py-3 flex justify-between items-center font-bold">
-                  <h1 className="text-lg text-white opacity-60 ">
-                    Filters
-                  </h1>
-                  <FilterListIcon 
-                   sx={{
-                    color: "white", 
-                  }}
-
+                  <h1 className="text-lg text-white opacity-60 ">Filters</h1>
+                  <FilterListIcon
+                    sx={{
+                      color: "white",
+                    }}
                   />
                 </div>
 
@@ -360,6 +358,7 @@ export default function Product() {
                               <div className="flex h-5 shrink-0 items-center">
                                 <div className="group grid size-4 grid-cols-1">
                                   <input
+                                    onChange={()=>handleFilter(option.value,section.id)}
                                     defaultValue={option.value}
                                     defaultChecked={option.checked}
                                     id={`filter-${section.id}-${optionIdx}`}
