@@ -31,6 +31,7 @@ import {
   Radio,
   RadioGroup,
 } from "@mui/material";
+import { Navigate, useLocation } from 'react-router-dom';
 
 const sortOptions = [
   { name: "Price: Low to High", href: "#", current: false },
@@ -43,6 +44,32 @@ function classNames(...classes) {
 
 export default function Product() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const location = useLocation()
+  const nevigate = useLocation()
+
+  const handleFilter=(value,sectionId)=>{
+    const searchParams = new URLSearchParams(location.search)
+    let filterValue=searchParams.getAll(sectionId)
+    
+    if(filterValue.length>0 && filterValue[0].split(",").includes(value)){
+      filterValue=filterValue[0].split(",").filter((item)=>item!==value);
+
+      if(filterValue.length==0){
+        searchParams.delete(sectionId)
+      }
+    }
+    else{
+      filterValue.push(value)
+    }
+
+    if(filterValue.length>0){
+      searchParams.set(sectionId, filterValue.join(","));
+      const query= searchParams.toString();
+      Navigate({search:'?${query}'})
+    }
+    
+  }
+
 
   return (
     <div className="bg-gray-900">
