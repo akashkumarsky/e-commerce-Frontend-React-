@@ -48,27 +48,35 @@ export default function Product() {
   const navigate = useNavigate();
 
   const handleFilter = (value, sectionId) => {
-    const useSearchParams = new URLSearchParams(location.search);
-    let filterValue = useSearchParams.getAll(sectionId);
+    const searchParams = new URLSearchParams(location.search);
+    let filterValue = searchParams.getAll(sectionId);
 
     if (filterValue.length > 0 && filterValue[0].split(",").includes(value)) {
       filterValue = filterValue[0].split(",").filter((item) => item !== value);
 
       if (filterValue.length === 0) {
-        useSearchParams.delete(sectionId);
+        searchParams.delete(sectionId);
       }
     } else {
       filterValue.push(value);
     }
 
     if (filterValue.length > 0) {
-      useSearchParams.set(sectionId, filterValue.join(","));
+      searchParams.set(sectionId, filterValue.join(","));
     }
 
-    const query = useSearchParams.toString();
-    navigate({ search: `?${query}` }); // Fixed template string interpolation
+    const query = searchParams.toString();
+    navigate({ search: `?${query}` }); 
   };
 
+  const handleRadioFilterChange=(e,sectionId)=>{
+    const searchParams = new URLSearchParams(location.search);
+    
+    searchParams.set(sectionId,e.target.value)
+    const query = searchParams.toString();
+    navigate({ search: `?${query}` }); 
+
+  }
 
 
   return (
@@ -434,6 +442,7 @@ export default function Product() {
                             >
                               {section.options.map((option, optionIdx) => (
                                 <FormControlLabel
+                                onChange={(e)=>handleRadioFilterChange(e,section.id)}
                                   key={optionIdx}
                                   value={option.value}
                                   control={
