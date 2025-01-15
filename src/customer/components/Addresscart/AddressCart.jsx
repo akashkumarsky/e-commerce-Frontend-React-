@@ -31,7 +31,7 @@ const AddressCart = () => {
         
         <Card key={address.id} sx={{ mb: 2  }}>
             
-          <CardContent className='bg-gradient-to-r from-gray-800 via-gray-700 to-gray-900 text-white'>
+          <CardContent className='bg-gray-900 text-white border-2'>
             <Typography variant="h6">{address.name}</Typography>
             <Typography variant="body2">
               {address.addressLine1}
@@ -42,7 +42,7 @@ const AddressCart = () => {
             </Typography>
             <Typography variant="body2">Phone: {address.phone}</Typography>
           </CardContent>
-          <Divider />
+          
   
 
         </Card>
