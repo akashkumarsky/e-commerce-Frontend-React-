@@ -16,6 +16,7 @@ import {
   TabPanels,
 } from '@headlessui/react'
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useNavigate } from 'react-router-dom'
 
 const navigation = {
   categories: [
@@ -100,13 +101,13 @@ const navigation = {
           id: 'clothing',
           name: 'Clothing',
           items: [
-            { name: 'Tops', href: '#' },
-            { name: 'Pants', href: '#' },
-            { name: 'Sweaters', href: '#' },
-            { name: 'T-Shirts', href: '#' },
-            { name: 'Jackets', href: '#' },
-            { name: 'Activewear', href: '#' },
-            { name: 'Browse All', href: '#' },
+            { name: 'Tops', href: 'Tops' },
+            { name: 'Pants', href: 'Pants' },
+            { name: 'Sweaters', href: 'Sweaters' },
+            { name: 'T-Shirts', href: 'T-shirts' },
+            { name: 'Jackets', href: 'Jackets' },
+            { name: 'Activewear', href: 'Activewear' },
+            { name: 'Browse All', href: 'Browser All' },
           ],
         },
         {
@@ -141,7 +142,40 @@ const navigation = {
 }
 
 export default function Navigation() {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [open, setOpen] = useState(false)
+  const navigate = useNavigate()
+
+  function handleCategoryClick(category, section, item) {
+
+
+    // Construct the URL dynamically
+    const url = `/${category.id}/${section.id}/${item.name.replace(/\s+/g, '-').toLowerCase()}`;
+    console.log("Generated URL:", url);
+
+    // Navigate to the URL or handle it as needed
+    window.location.href = url; // Or use React Router's `navigate(url)`
+  }
+ 
+ 
+
+  const handleProfileClick = () => {
+    setDropdownOpen(false); // Close dropdown
+    navigate('/profile'); // Navigate to profile page
+  };
+
+  const handleOrdersClick = () => {
+    setDropdownOpen(false); // Close dropdown
+    navigate('/account/order'); // Navigate to orders page
+  };
+
+  const handleLogout = () => {
+    setDropdownOpen(false); // Close dropdown
+    // Handle logout logic here, e.g., clear session or token
+    console.log('Logging out...');
+    navigate('/login'); // Redirect to login page after logout
+  };
+
 
   return (
     <div className="bg-gray-700">
@@ -339,7 +373,7 @@ export default function Navigation() {
                               <div className="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm">
                                 {category.sections.map((section) => (
                                   <div key={section.name}>
-                                    <p id={`${section.name}-heading`} className="font-medium text-gray-900">
+                                    <p id={`${section.name}-heading`} className=" text-lg font-medium text-gray-900">
                                       {section.name}
                                     </p>
                                     <ul
@@ -349,11 +383,17 @@ export default function Navigation() {
                                     >
                                       {section.items.map((item) => (
                                         <li key={item.name} className="flex">
-                                          <a href={item.href} className="text-gray-100 hover:text-green-500 ">
+                                          <p
+                                            onClick={() =>
+                                              handleCategoryClick(category, section, item)
+                                            }
+                                            className="cursor-pointer text-white hover:text-gray-800"
+                                          >
                                             {item.name}
-                                          </a>
+                                          </p>
                                         </li>
                                       ))}
+
                                     </ul>
                                   </div>
                                 ))}
@@ -378,15 +418,52 @@ export default function Navigation() {
               </PopoverGroup>
 
               <div className="ml-auto flex items-center">
-                <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  <a href="#" className="text-sm font-medium text-white hover:text-green-500">
-                    Sign in
-                  </a>
-                  <span aria-hidden="true" className="h-6 w-px bg-gray-200" />
-                  <a href="#" className="text-sm font-medium text-white hover:text-green-500">
-                    Create account
-                  </a>
+                
+
+                {/* Avatar and Dropdown */}
+                <div className="relative">
+                  <div className="flex items-center cursor-pointer" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                    <img
+                      src="https://www.w3schools.com/howto/img_avatar.png" // Placeholder avatar image
+                      alt="Avatar"
+                      className="w-10 h-10 rounded-full"
+                    />
+                  </div>
+
+                  {/* Dropdown menu */}
+                  {dropdownOpen && (
+                    <div className="absolute right-0 mt-2 bg-gray-800 text-white rounded-lg shadow-lg w-48">
+                      <ul className="space-y-2 p-2">
+                        <li>
+                          <p
+                            onClick={handleProfileClick}
+                            className="cursor-pointer hover:bg-gray-700 p-2 rounded"
+                          >
+                            My Profile
+                          </p>
+                        </li>
+                        <li>
+                          <p
+                            onClick={handleOrdersClick}
+                            className="cursor-pointer hover:bg-gray-700 p-2 rounded"
+                          >
+                            My Orders
+                          </p>
+                        </li>
+                        <li>
+                          <p
+                            onClick={handleLogout}
+                            className="cursor-pointer hover:bg-gray-700 p-2 rounded"
+                          >
+                            Logout
+                          </p>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
                 </div>
+
+
 
                 <div className="hidden lg:ml-8 lg:flex">
                   <a href="#" className="flex items-center text-white hover:text-green-800">

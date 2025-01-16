@@ -7,6 +7,7 @@ import { Box, Button, Grid, LinearProgress, Rating } from "@mui/material";
 import ProductReviewCart from "./ProductReviewCart";
 import { HomeSectionCardData } from "../HomeSectionCard/HomeSectionCardData";
 import HomeSectionCard from "../HomeSectionCard/HomeSectionCard";
+import { useNavigate } from "react-router-dom";
 
 const product = {
   name: "Basic Tee 6-Pack",
@@ -65,6 +66,12 @@ function classNames(...classes) {
 export default function ProductDetails() {
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [selectedSize, setSelectedSize] = useState(product.sizes[2]);
+  const navigate = useNavigate();
+
+  // Navigate to the product details page when the card is clicked
+  const handleaddtocart = () => {
+    navigate("/cart"); // Assuming `product.id` is the unique identifier
+  };
 
   return (
     <div className="bg-gray-900 lg:px-20">
@@ -255,6 +262,7 @@ export default function ProductDetails() {
                         transform: "scale(1.05)", // Slightly enlarge the button on hover
                       },
                     }}
+                    onClick={handleaddtocart}
                   >
                     Add to Cart
                   </Button>
