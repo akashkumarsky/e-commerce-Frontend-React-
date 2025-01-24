@@ -17,6 +17,9 @@ import {
 } from '@headlessui/react'
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom'
+import AuthModel from '../auth/AuthModel'
+import { Avatar, Button, Menu, MenuItem } from '@mui/material'
+import { deepPurple } from '@mui/material/colors'
 
 const navigation = {
   categories: [
@@ -143,12 +146,49 @@ const navigation = {
 
 export default function Navigation() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+const [authModalOpen, setAuthModalOpen] = useState(false);
+
   const [open, setOpen] = useState(false)
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openUserMenu = Boolean(anchorEl);
   const navigate = useNavigate()
 
+
+  // Update the handlers
+const handleAuthOpen = () => {
+  setAuthModalOpen(true);
+};
+
+const handleAuthClose = () => {
+  setAuthModalOpen(false);
+};
+
+// Update mobile menu handlers
+const handleMobileMenuOpen = () => {
+  setMobileMenuOpen(true);
+};
+
+const handleMobileMenuClose = () => {
+  setMobileMenuOpen(false);
+};
+
+  const handleUserClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = (event) => {
+    setAnchorEl(null);
+  };
+
+  
+
+  const handleLogout = () => {
+    handleCloseUserMenu();
+    
+  };
+
   function handleCategoryClick(category, section, item) {
-
-
     // Construct the URL dynamically
     const url = `/${category.id}/${section.id}/${item.name.replace(/\s+/g, '-').toLowerCase()}`;
     console.log("Generated URL:", url);
@@ -156,31 +196,17 @@ export default function Navigation() {
     // Navigate to the URL or handle it as needed
     window.location.href = url; // Or use React Router's `navigate(url)`
   }
- 
- 
 
-  const handleProfileClick = () => {
-    setDropdownOpen(false); // Close dropdown
-    navigate('/profile'); // Navigate to profile page
-  };
 
-  const handleOrdersClick = () => {
-    setDropdownOpen(false); // Close dropdown
-    navigate('/account/order'); // Navigate to orders page
-  };
 
-  const handleLogout = () => {
-    setDropdownOpen(false); // Close dropdown
-    // Handle logout logic here, e.g., clear session or token
-    console.log('Logging out...');
-    navigate('/login'); // Redirect to login page after logout
-  };
 
+
+  
 
   return (
     <div className="bg-gray-700">
       {/* Mobile menu */}
-      <Dialog open={open} onClose={setOpen} className="relative z-40 lg:hidden">
+      <Dialog open={mobileMenuOpen} onClose={handleMobileMenuClose} className="relative z-40 lg:hidden">
         <DialogBackdrop
           transition
           className="fixed inset-0 bg-black/25 transition-opacity duration-300 ease-linear data-[closed]:opacity-0"
@@ -301,6 +327,8 @@ export default function Navigation() {
         </div>
       </Dialog>
 
+      <AuthModel open={authModalOpen} handleClose={handleAuthOpen} />
+
       <header className="relative bg-gray-700">
         <p className="flex h-10 items-center justify-center bg-gray-800 px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
           Get free delivery on orders over ₹500
@@ -416,54 +444,45 @@ export default function Navigation() {
                   ))}
                 </div>
               </PopoverGroup>
-
               <div className="ml-auto flex items-center">
-                
+            <div className="hidden lg:flex lg:fle x-1 lg:items-center lg:justify-end lg:space-x-6">
 
-                {/* Avatar and Dropdown */}
-                <div className="relative">
-                  <div className="flex items-center cursor-pointer" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                    <img
-                      src="https://www.w3schools.com/howto/img_avatar.png" // Placeholder avatar image
-                      alt="Avatar"
-                      className="w-10 h-10 rounded-full"
-                    />
-                  </div>
 
-                  {/* Dropdown menu */}
-                  {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 bg-gray-800 text-white rounded-lg shadow-lg w-48">
-                      <ul className="space-y-2 p-2">
-                        <li>
-                          <p
-                            onClick={handleProfileClick}
-                            className="cursor-pointer hover:bg-gray-700 p-2 rounded"
-                          >
-                            My Profile
-                          </p>
-                        </li>
-                        <li>
-                          <p
-                            onClick={handleOrdersClick}
-                            className="cursor-pointer hover:bg-gray-700 p-2 rounded"
-                          >
-                            My Orders
-                          </p>
-                        </li>
-                        <li>
-                          <p
-                            onClick={handleLogout}
-                            className="cursor-pointer hover:bg-gray-700 p-2 rounded"
-                          >
-                            Logout
-                          </p>
-                        </li>
-                      </ul>
-                    </div>
-                  )}
+                <div>
+                    <Avatar
+                        className="text-white"
+                        onClick={handleUserClick}
+                        aria-controls={openUserMenu ? "basic-menu" : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={openUserMenu ? "true" : undefined}
+                        sx={{
+                            bgcolor: deepPurple[500],
+                            color: "white",
+                            cursor: "pointer",
+                        }}
+                    >
+                        R
+                    </Avatar>
+                    <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={openUserMenu}
+                        onClose={handleCloseUserMenu}
+                        MenuListProps={{
+                            "aria-labelledby": "basic-button",
+                        }}
+                    >
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                    </Menu>
                 </div>
-
-
+                <Button
+                    onClick={handleAuthOpen}
+                    className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                >
+                    Signin
+                </Button>
+            </div>
+        
 
                 <div className="hidden lg:ml-8 lg:flex">
                   <a href="#" className="flex items-center text-white hover:text-green-800">
@@ -501,6 +520,7 @@ export default function Navigation() {
           </div>
         </nav>
       </header>
+      
     </div>
   )
 }
