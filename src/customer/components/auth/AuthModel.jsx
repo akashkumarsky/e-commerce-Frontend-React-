@@ -1,5 +1,5 @@
-import { Box, Modal, Typography } from '@mui/material'
-import React from 'react'
+import { Box, Modal } from '@mui/material'
+import React, { useState } from 'react'
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 
@@ -16,6 +16,16 @@ const style = {
 };
 
 export default function AuthModel({ open,handleClose }) {
+
+  const [isLogin, setIsLogin] = useState(true);
+
+  const toggleForm = () => {
+    setIsLogin(!isLogin);
+  };
+
+
+
+
   return (
 
     <Modal
@@ -25,12 +35,12 @@ export default function AuthModel({ open,handleClose }) {
       aria-describedby="modal-modal-description"
       size="large"
     >
-      <Box className="rounded-md" sx={style}>
-
-        {/* <LoginForm /> */}
-
-        <RegisterForm />
-
+     <Box className="rounded-md" sx={style}>
+        {isLogin ? (
+          <LoginForm toggleForm={toggleForm} />
+        ) : (
+          <RegisterForm toggleForm={toggleForm} />
+        )}
       </Box>
     </Modal>
 

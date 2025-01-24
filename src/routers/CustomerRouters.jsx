@@ -10,6 +10,7 @@ import Order from '../customer/components/Order/Order'
 import OrderDetails from '../customer/components/Order/OrderDetails'
 import ProductDetails from '../customer/components/ProductDetails/ProductDetails'
 import AuthModel from '../customer/components/auth/AuthModel'
+import RegisterForm from '../customer/components/auth/RegisterForm'
 
 const CustomerRouters = () => {
     return (
@@ -17,7 +18,7 @@ const CustomerRouters = () => {
             <div>
                 <Navigation />
             </div>
-  
+
             <Routes>
                 <Route path='/' element={<Homepage />}></Route>
                 <Route path='/cart' element={<Cart />}></Route>
@@ -27,13 +28,14 @@ const CustomerRouters = () => {
                 <Route path='/account/order' element={<Order />}></Route>
                 <Route path='/account/order/:orderId' element={<OrderDetails />}></Route>
                 <Route path='/model' element={<AuthModel />}></Route>
-                
+                <Route path='/register' element={<RegisterForm />}></Route>
+
 
             </Routes>
 
-          <div>
-            <Footer/>
-        </div>  
+            <div>
+                <Footer />
+            </div>
 
         </div>
     )

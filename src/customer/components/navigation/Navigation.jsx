@@ -327,7 +327,7 @@ const handleMobileMenuClose = () => {
         </div>
       </Dialog>
 
-      <AuthModel open={authModalOpen} handleClose={handleAuthOpen} />
+      <AuthModel open={authModalOpen} handleClose={handleAuthClose} />
 
       <header className="relative bg-gray-700">
         <p className="flex h-10 items-center justify-center bg-gray-800 px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
@@ -477,7 +477,13 @@ const handleMobileMenuClose = () => {
                 </div>
                 <Button
                     onClick={handleAuthOpen}
-                    className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                    sx={{ 
+                      color: 'white',
+                      '&:hover': {
+                          color: '#4ade80' // This is the green-500 color for hover state
+                      }
+                  }}
+                    className="text-sm font-medium "
                 >
                     Signin
                 </Button>
