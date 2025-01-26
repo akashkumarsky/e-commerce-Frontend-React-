@@ -37,7 +37,7 @@ export default function AuthModel({ open,handleClose }) {
     >
      <Box className="rounded-md" sx={style}>
         {isLogin ? (
-          <LoginForm toggleForm={toggleForm} />
+          <LoginForm toggleForm={toggleForm} handleClose={handleClose} />
         ) : (
           <RegisterForm toggleForm={toggleForm} />
         )}

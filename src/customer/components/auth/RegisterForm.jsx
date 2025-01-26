@@ -1,7 +1,22 @@
-import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material'
-import React, { useState } from 'react'
+import { Alert, Button, FormControl, Grid, InputLabel, MenuItem, Select, Snackbar, TextField } from '@mui/material'
+import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUser, register } from '../../../state/Auth/Action'
 
 const RegisterForm = ({toggleForm}) => {
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.auth);
+  const auth = useSelector((store) => store.auth);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+
+  // Fix useEffect syntax
+  useEffect(() => {
+    if(auth.jwt) {
+      dispatch(getUser(auth.jwt));
+    }
+  }, [auth.jwt, dispatch]);
+
   const [userData, setUserData] = useState({
     firstName: '',
     lastName: '',
@@ -21,18 +36,8 @@ const RegisterForm = ({toggleForm}) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      console.log('Form submitted:', userData);
-      // Here you would typically make an API call to your backend
-      // Example:
-      // const response = await fetch('/api/register', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(userData),
-      // });
-      
-      // Clear form after successful submission
+      await dispatch(register(userData));
+      setOpenSnackbar(true);
       setUserData({
         firstName: '',
         lastName: '',
@@ -40,13 +45,18 @@ const RegisterForm = ({toggleForm}) => {
         role: '',
         password: ''
       });
-      
-      // Optionally switch to login form after successful registration
-      // toggleForm();
+      setTimeout(() => {
+        toggleForm();
+      }, 2000);
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error('Registration failed:', error);
     }
   };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+      
 
   return (
     <div className="">
@@ -140,6 +150,16 @@ const RegisterForm = ({toggleForm}) => {
           </Button>
         </div>
       </div>
+      <Snackbar 
+        open={openSnackbar} 
+        autoHideDuration={8000} 
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert severity="success" sx={{ width: '100%' }}>
+          Registration successful! Please login.
+        </Alert>
+      </Snackbar>
     </div>
   )
 }

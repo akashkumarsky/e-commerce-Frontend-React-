@@ -20,6 +20,8 @@ import { useNavigate } from 'react-router-dom'
 import AuthModel from '../auth/AuthModel'
 import { Avatar, Button, Menu, MenuItem } from '@mui/material'
 import { deepPurple } from '@mui/material/colors'
+import { useDispatch, useSelector } from 'react-redux'
+import { logout } from '../../../state/Auth/Action'
 
 const navigation = {
   categories: [
@@ -145,33 +147,37 @@ const navigation = {
 }
 
 export default function Navigation() {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const [open, setOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const auth = useSelector(state => state.auth);
+  const isAuthenticated = auth.jwt !== null;
 
 
   // Update the handlers
-const handleAuthOpen = () => {
-  setAuthModalOpen(true);
-};
+  const handleAuthOpen = () => {
+    setAuthModalOpen(true);
+  };
 
-const handleAuthClose = () => {
-  setAuthModalOpen(false);
-};
+  const handleAuthClose = () => {
+    setAuthModalOpen(false);
+  };
 
-// Update mobile menu handlers
-const handleMobileMenuOpen = () => {
-  setMobileMenuOpen(true);
-};
+  // Update mobile menu handlers
+  const handleMobileMenuOpen = () => {
+    setMobileMenuOpen(true);
+  };
 
-const handleMobileMenuClose = () => {
-  setMobileMenuOpen(false);
-};
+  const handleMobileMenuClose = () => {
+    setMobileMenuOpen(false);
+  };
 
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -181,12 +187,23 @@ const handleMobileMenuClose = () => {
     setAnchorEl(null);
   };
 
-  
+
 
   const handleLogout = () => {
+    dispatch(logout());
     handleCloseUserMenu();
-    
-  };
+
+  }
+
+  const handleProfile = () => {
+    navigate('/profile');
+    handleCloseUserMenu();
+  }
+
+  const handleMyOrder = () => {
+    navigate('/myorder');
+    handleCloseUserMenu();
+  }
 
   function handleCategoryClick(category, section, item) {
     // Construct the URL dynamically
@@ -201,7 +218,7 @@ const handleMobileMenuClose = () => {
 
 
 
-  
+
 
   return (
     <div className="bg-gray-700">
@@ -215,12 +232,12 @@ const handleMobileMenuClose = () => {
         <div className="fixed inset-0 z-40 flex">
           <DialogPanel
             transition
-            className="relative flex w-full max-w-xs transform flex-col overflow-y-auto bg-white pb-12 shadow-xl transition duration-300 ease-in-out data-[closed]:-translate-x-full"
+            className="relative flex w-full max-w-xs transform flex-col overflow-y-auto bg-gray-700 pb-12 shadow-xl transition duration-300 ease-in-out data-[closed]:-translate-x-full"
           >
             <div className="flex px-4 pb-2 pt-5">
               <button
                 type="button"
-                onClick={() => setOpen(false)}
+                onClick={handleMobileMenuClose}
                 className="relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-white"
               >
                 <span className="absolute -inset-0.5" />
@@ -254,11 +271,11 @@ const handleMobileMenuClose = () => {
                             src={item.imageSrc}
                             className="aspect-square w-full rounded-lg bg-gray-100 object-cover group-hover:opacity-75"
                           />
-                          <a href={item.href} className="mt-6 block font-medium text-gray-900">
+                          <a href={item.href} className="mt-6 block font-medium text-white opacity-75 group-hover:opacity-100">
                             <span aria-hidden="true" className="absolute inset-0 z-10" />
                             {item.name}
                           </a>
-                          <p aria-hidden="true" className="mt-1">
+                          <p aria-hidden="true" className="mt-1 text-white">
                             Shop now
                           </p>
                         </div>
@@ -292,7 +309,7 @@ const handleMobileMenuClose = () => {
             <div className="space-y-6 border-t border-gray-200 px-4 py-6">
               {navigation.pages.map((page) => (
                 <div key={page.name} className="flow-root">
-                  <a href={page.href} className="-m-2 block p-2 font-medium ">
+                  <a href={page.href} className="-m-2 block p-2 font-medium text-white opacity-75 hover:opacity-100 ">
                     {page.name}
                   </a>
                 </div>
@@ -301,12 +318,12 @@ const handleMobileMenuClose = () => {
 
             <div className="space-y-6 border-t border-gray-200 px-4 py-6">
               <div className="flow-root text-white">
-                <a href="#" className="-m-2 block p-2 font-medium ">
+                <a href="#" className="-m-2 block p-2 font-medium text-white opacity-75 hover:opacity-100 ">
                   Sign in
                 </a>
               </div>
               <div className="flow-root white">
-                <a href="#" className="-m-2 block p-2 font-medium text-gray-900">
+                <a href="#" className="-m-2 block p-2 font-medium text-white opacity-75 hover:opacity-100">
                   Create account
                 </a>
               </div>
@@ -339,7 +356,7 @@ const handleMobileMenuClose = () => {
             <div className="flex h-16 items-center">
               <button
                 type="button"
-                onClick={() => setOpen(true)}
+                onClick={handleMobileMenuOpen}
                 className="relative rounded-md bg-white p-2 text-gray-400 lg:hidden"
               >
                 <span className="absolute -inset-0.5" />
@@ -445,50 +462,54 @@ const handleMobileMenuClose = () => {
                 </div>
               </PopoverGroup>
               <div className="ml-auto flex items-center">
-            <div className="hidden lg:flex lg:fle x-1 lg:items-center lg:justify-end lg:space-x-6">
+                <div className="hidden lg:flex lg:fle x-1 lg:items-center lg:justify-end lg:space-x-6">
 
 
-                <div>
-                    <Avatar
+                  {isAuthenticated ? (
+                    <div>
+                      <Avatar
                         className="text-white"
                         onClick={handleUserClick}
                         aria-controls={openUserMenu ? "basic-menu" : undefined}
                         aria-haspopup="true"
                         aria-expanded={openUserMenu ? "true" : undefined}
                         sx={{
-                            bgcolor: deepPurple[500],
-                            color: "white",
-                            cursor: "pointer",
+                          bgcolor: deepPurple[500],
+                          color: "white",
+                          cursor: "pointer",
                         }}
-                    >
+                      >
                         R
-                    </Avatar>
-                    <Menu
+                      </Avatar>
+                      <Menu
                         id="basic-menu"
                         anchorEl={anchorEl}
                         open={openUserMenu}
                         onClose={handleCloseUserMenu}
                         MenuListProps={{
-                            "aria-labelledby": "basic-button",
+                          "aria-labelledby": "basic-button",
                         }}
-                    >
+                      >
+                        <MenuItem onClick={handleProfile}>Profile</MenuItem>
+                        <MenuItem onClick={handleMyOrder}>My Order</MenuItem>
                         <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                    </Menu>
+                      </Menu>
+                    </div>
+                  ) : (
+                    <Button
+                      onClick={handleAuthOpen}
+                      sx={{
+                        color: 'white',
+                        '&:hover': {
+                          color: '#4ade80'
+                        }
+                      }}
+                    >
+                      Signin
+                    </Button>
+                  )}
                 </div>
-                <Button
-                    onClick={handleAuthOpen}
-                    sx={{ 
-                      color: 'white',
-                      '&:hover': {
-                          color: '#4ade80' // This is the green-500 color for hover state
-                      }
-                  }}
-                    className="text-sm font-medium "
-                >
-                    Signin
-                </Button>
-            </div>
-        
+
 
                 <div className="hidden lg:ml-8 lg:flex">
                   <a href="#" className="flex items-center text-white hover:text-green-800">
@@ -526,7 +547,7 @@ const handleMobileMenuClose = () => {
           </div>
         </nav>
       </header>
-      
+
     </div>
   )
 }

@@ -1,11 +1,47 @@
 import { Alert, Button, Grid, Snackbar, TextField } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { getUser, login } from '../../../state/Auth/Action';
 
-const LoginForm = ({toggleForm}) => {
+  
+    
+
+
+const LoginForm = ({toggleForm , handleClose}) => {
+  const dispatch = useDispatch();
+  const auth = useSelector((store) => store);
+  const { loading, error } = useSelector((state) => state);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  
+  
+    useEffect(() => {
+      if(auth.jwt) {
+        dispatch(getUser(auth.jwt));
+      }
+    }, [auth.jwt, dispatch]);
+
   const [userData, setUserData] = useState({
     email: '',
     password: ''
   });
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      await dispatch(login(userData));
+      setOpenSnackbar(true);
+      setTimeout(() => {
+        handleClose();
+      }, 2000);
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -15,30 +51,6 @@ const LoginForm = ({toggleForm}) => {
     }));
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      console.log('Login form submitted:', userData);
-      // Here you would typically make an API call to your backend
-      // Example:
-      // const response = await fetch('/api/login', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(userData),
-      // });
-      
-      // Clear form after successful submission
-      setUserData({
-        email: '',
-        password: ''
-      });
-      
-    } catch (error) {
-      console.error('Login error:', error);
-    }
-  };
 
   return (
     <div>
@@ -93,6 +105,16 @@ const LoginForm = ({toggleForm}) => {
           </div>
         </div>
       </React.Fragment>
+      <Snackbar 
+        open={openSnackbar} 
+        autoHideDuration={2000} 
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert severity={error ? "error" : "success"} sx={{ width: '100%' }}>
+          {error ? "Login failed" : "Login successful!"}
+        </Alert>
+      </Snackbar>
     </div>
   )
 }
