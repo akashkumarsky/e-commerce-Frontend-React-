@@ -148,27 +148,34 @@ const navigation = {
 
 export default function Navigation() {
 
-  const [open, setOpen] = useState(false)
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
   const auth = useSelector(state => state.auth);
-  const isAuthenticated = auth.jwt !== null;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
+  const handleUserClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-  // Update the handlers
+  const handleCloseUserMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    handleCloseUserMenu();
+  };
+
   const handleAuthOpen = () => {
     setAuthModalOpen(true);
   };
 
   const handleAuthClose = () => {
     setAuthModalOpen(false);
-  };
+  };;
 
   // Update mobile menu handlers
   const handleMobileMenuOpen = () => {
@@ -179,21 +186,6 @@ export default function Navigation() {
     setMobileMenuOpen(false);
   };
 
-  const handleUserClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleCloseUserMenu = (event) => {
-    setAnchorEl(null);
-  };
-
-
-
-  const handleLogout = () => {
-    dispatch(logout());
-    handleCloseUserMenu();
-
-  }
 
   const handleProfile = () => {
     navigate('/profile');
@@ -464,8 +456,7 @@ export default function Navigation() {
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:fle x-1 lg:items-center lg:justify-end lg:space-x-6">
 
-
-                  {isAuthenticated ? (
+                  {auth.jwt ? (
                     <div>
                       <Avatar
                         className="text-white"
@@ -479,7 +470,7 @@ export default function Navigation() {
                           cursor: "pointer",
                         }}
                       >
-                        R
+                        {auth.user?.firstName?.[0]?.toUpperCase()}
                       </Avatar>
                       <Menu
                         id="basic-menu"
@@ -490,8 +481,6 @@ export default function Navigation() {
                           "aria-labelledby": "basic-button",
                         }}
                       >
-                        <MenuItem onClick={handleProfile}>Profile</MenuItem>
-                        <MenuItem onClick={handleMyOrder}>My Order</MenuItem>
                         <MenuItem onClick={handleLogout}>Logout</MenuItem>
                       </Menu>
                     </div>

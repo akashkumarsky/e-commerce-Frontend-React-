@@ -9,22 +9,25 @@ import { getUser, login } from '../../../state/Auth/Action';
 
 const LoginForm = ({toggleForm , handleClose}) => {
   const dispatch = useDispatch();
-  const auth = useSelector((store) => store);
-  const { loading, error } = useSelector((state) => state);
+  const { loading, error, jwt } = useSelector((state) => state.auth);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  
-  
-    useEffect(() => {
-      if(auth.jwt) {
-        dispatch(getUser(auth.jwt));
-      }
-    }, [auth.jwt, dispatch]);
+  const [loginError, setLoginError] = useState(null);
+  const [loginSuccess, setLoginSuccess] = useState(false);
 
   const [userData, setUserData] = useState({
     email: '',
     password: ''
   });
 
+
+
+    useEffect(() => {
+      if(jwt) {
+        dispatch(getUser(jwt));
+      }
+    }, [jwt, dispatch]);
+
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -54,7 +57,7 @@ const LoginForm = ({toggleForm , handleClose}) => {
 
   return (
     <div>
-      <React.Fragment className="shadow-lg">
+      <React.Fragment >
         <form className="w-full" onSubmit={handleSubmit}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
