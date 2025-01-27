@@ -23,9 +23,6 @@ export default function AuthModel({ open,handleClose }) {
     setIsLogin(!isLogin);
   };
 
-
-
-
   return (
 
     <Modal
