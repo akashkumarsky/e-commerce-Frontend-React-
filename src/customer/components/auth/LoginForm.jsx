@@ -82,6 +82,16 @@ const LoginForm = ({ toggleForm, handleClose }) => {
 
   return (
     <div>
+       <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={loginSuccess ? 'success' : 'error'}>
+          {loginSuccess ? 'Login successful!' : loginError}
+        </Alert>
+      </Snackbar>
       <React.Fragment>
         <form className="w-full" onSubmit={handleSubmit}>
           <Grid container spacing={3}>
@@ -127,9 +137,8 @@ const LoginForm = ({ toggleForm, handleClose }) => {
                 variant="contained"
                 size="large"
                 sx={{ padding: ".8rem 0" }}
-                disabled={loading}
               >
-                {loading ? <CircularProgress size={24} /> : 'Login'}
+                Login
               </Button>
             </Grid>
           </Grid>
@@ -145,15 +154,7 @@ const LoginForm = ({ toggleForm, handleClose }) => {
         </div>
       </React.Fragment>
 
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={loginSuccess ? 'success' : 'error'}>
-          {loginSuccess ? 'Login successful!' : loginError}
-        </Alert>
-      </Snackbar>
+     
     </div>
   );
 };
