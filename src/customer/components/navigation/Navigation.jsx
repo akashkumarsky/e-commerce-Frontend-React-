@@ -153,6 +153,7 @@ export default function Navigation() {
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
   const auth = useSelector(state => state.auth);
+  const isAuthenticated = Boolean(auth.jwt);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -456,7 +457,7 @@ export default function Navigation() {
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:fle x-1 lg:items-center lg:justify-end lg:space-x-6">
 
-                  {auth.jwt ? (
+                  {isAuthenticated ? (
                     <div>
                       <Avatar
                         className="text-white"
