@@ -1,58 +1,108 @@
-import { API_BASE_URL } from '../../config/ApiConfig';
-import { 
+import {
+  GET_PRODUCTS_REQUEST,
+  GET_PRODUCTS_SUCCESS,
+  GET_PRODUCTS_FAILURE,
+  CREATE_PRODUCT_REQUEST,
+  CREATE_PRODUCT_SUCCESS,
+  CREATE_PRODUCT_FAILURE,
+  UPDATE_PRODUCT_REQUEST,
+  UPDATE_PRODUCT_SUCCESS,
+  UPDATE_PRODUCT_FAILURE,
+  DELETE_PRODUCT_REQUEST,
+  DELETE_PRODUCT_SUCCESS,
+  DELETE_PRODUCT_FAILURE,
+} from "./ActionType";
+import { api, API_BASE_URL } from "../../config/ApiConfig";
 
-FIND_PRODUCTS_REQUEST,
-FIND_PRODUCTS_SUCCESS,
-FIND_PRODUCTS_FAILURE
-} from './ActionType';
 
-export const findProducts = (reqData) => async (dispatch) => {
-try {
-    dispatch({ type: FIND_PRODUCTS_REQUEST });
+export const getProducts = () => async (dispatch) => {
+  try {
+    dispatch({ type: GET_PRODUCTS_REQUEST });
 
-    const queryString = new URLSearchParams({
-        category: reqData.category || '',
-        color: reqData.color || '',
-        size: reqData.size || '',
-        minPrice: reqData.minPrice || '',
-        maxPrice: reqData.maxPrice || '',
-        minDiscount: reqData.minDiscount || '',
-        sort: reqData.sort || '',
-        stock: reqData.stock || '',
-        pageNumber: reqData.pageNumber || '',
-        pageSize: reqData.pageSize || ''
-    }).toString();
-
-    const response = await fetch(
-        `${API_BASE_URL}/api/products?${queryString}`
-    );
-    const data = await response.json();
+    const { data } = await api.get(`${API_BASE_URL}/api/admin/products/`);
 
     dispatch({
-        type: FIND_PRODUCTS_SUCCESS,
-        payload: data
+      type: GET_PRODUCTS_SUCCESS,
+      payload: data,
     });
-} catch (error) {
+  } catch (error) {
     dispatch({
-        type: FIND_PRODUCTS_FAILURE,
-        payload: error.message
+      type: GET_PRODUCTS_FAILURE,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
     });
-}
+  }
 };
 
-export const findProductById = (productId) => async (dispatch) => {
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/products/${productId}`);
-        const data = await response.json();
-        
-        dispatch({
-            type: 'FIND_PRODUCT_BY_ID_SUCCESS',
-            payload: data
-        });
-    } catch (error) {
-        dispatch({
-            type: 'FIND_PRODUCT_BY_ID_FAILURE',
-            payload: error.message
-        });
-    }
+export const createProduct = (product) => async (dispatch) => {
+  try {
+    dispatch({ type: CREATE_PRODUCT_REQUEST });
+
+    const { data } = await api.post(
+      `${API_BASE_URL}/api/admin/products/`,
+      product.data
+    );
+
+    dispatch({
+      type: CREATE_PRODUCT_SUCCESS,
+      payload: data,
+    });
+
+    console.log("created product ", data);
+  } catch (error) {
+    dispatch({
+      type: CREATE_PRODUCT_FAILURE,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const updateProduct = (product) => async (dispatch) => {
+  try {
+    dispatch({ type: UPDATE_PRODUCT_REQUEST });
+
+    const { data } = await api.put(
+      `${API_BASE_URL}/api/admin/products/${product.productId}`,
+      product
+    );
+
+    dispatch({
+      type: UPDATE_PRODUCT_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: UPDATE_PRODUCT_FAILURE,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const deleteProduct = (data) => async (dispatch) => {
+  try {
+    dispatch({ type: DELETE_PRODUCT_REQUEST });
+
+    await api.delete(`/api/admin/products/${data.productId}`);
+
+    dispatch({
+      type: DELETE_PRODUCT_SUCCESS,
+      payload: data.productId,
+    });
+  } catch (error) {
+    dispatch({
+      type: DELETE_PRODUCT_FAILURE,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
 };
