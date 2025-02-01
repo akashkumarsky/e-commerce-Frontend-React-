@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import {
   Dialog,
   DialogBackdrop,
@@ -21,7 +21,7 @@ import AuthModel from '../auth/AuthModel'
 import { Avatar, Button, Menu, MenuItem } from '@mui/material'
 import { deepPurple } from '@mui/material/colors'
 import { useDispatch, useSelector } from 'react-redux'
-import { logout } from '../../../state/Auth/Action'
+import { getUser, logout } from '../../../state/Auth/Action'
 import { navigation } from '../../../config/NavigationMenu'
 
 
@@ -33,9 +33,20 @@ export default function Navigation() {
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
   const auth = useSelector(state => state.auth);
-  const isAuthenticated = Boolean(auth.jwt);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+ 
+
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      dispatch(getUser(jwt));
+    }
+  }, []);
+
+  const isAuthenticated = Boolean(localStorage.getItem('jwt'));
 
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -46,8 +57,9 @@ export default function Navigation() {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('jwt');
     dispatch(logout());
-    handleCloseUserMenu();
+    setAnchorEl(null);
   };
 
   const handleAuthOpen = () => {
@@ -342,9 +354,8 @@ export default function Navigation() {
                       <Avatar
                         className="text-white"
                         onClick={handleUserClick}
-                        aria-controls={openUserMenu ? "basic-menu" : undefined}
+                        aria-controls={Boolean(anchorEl) ? "basic-menu" : undefined}
                         aria-haspopup="true"
-                        aria-expanded={openUserMenu ? "true" : undefined}
                         sx={{
                           bgcolor: deepPurple[500],
                           color: "white",
@@ -356,25 +367,14 @@ export default function Navigation() {
                       <Menu
                         id="basic-menu"
                         anchorEl={anchorEl}
-                        open={openUserMenu}
-                        onClose={handleCloseUserMenu}
-                        MenuListProps={{
-                          "aria-labelledby": "basic-button",
-                        }}
+                        open={Boolean(anchorEl)}
+                        onClose={() => setAnchorEl(null)}
                       >
                         <MenuItem onClick={handleLogout}>Logout</MenuItem>
                       </Menu>
                     </div>
                   ) : (
-                    <Button
-                      onClick={handleAuthOpen}
-                      sx={{
-                        color: 'white',
-                        '&:hover': {
-                          color: '#4ade80'
-                        }
-                      }}
-                    >
+                    <Button onClick={handleAuthOpen}>
                       Signin
                     </Button>
                   )}
