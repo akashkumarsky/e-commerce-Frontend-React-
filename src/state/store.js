@@ -1,15 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { thunk } from 'redux-thunk';
 import authReducer from './Auth/Reducer';
-import costmerProductsReducer from './Product/Reducer';
 import cartReducer from './Cart/Reducer';
+import { orderReducer } from './Order/Reducer';
+import customerProductReducer from './Product/Reducer';
+
 
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    product: costmerProductsReducer,
+    customersProduct:customerProductReducer,
     cart: cartReducer,
+    order:orderReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk)
 });

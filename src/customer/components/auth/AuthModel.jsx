@@ -1,7 +1,9 @@
 import { Box, Modal } from '@mui/material'
-import React, { useState } from 'react'
-import LoginForm from './LoginForm';
-import RegisterForm from './RegisterForm';
+import React, { useEffect, useState } from 'react'
+import LoginUserForm from './LoginForm';
+import RegisterUserForm from './RegisterForm';
+import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 
 const style = {
@@ -15,13 +17,14 @@ const style = {
   p: 4,
 };
 
-export default function AuthModel({ open,handleClose }) {
+export default function AuthModel({ handleClose, open }) {
 
-  const [isLogin, setIsLogin] = useState(true);
+  const location = useLocation();
+  const { auth } = useSelector((store) => store);
 
-  const toggleForm = () => {
-    setIsLogin(!isLogin);
-  };
+  useEffect(() => {
+    if (auth.user) handleClose();
+  }, [auth.user]);
 
   return (
 
@@ -32,13 +35,14 @@ export default function AuthModel({ open,handleClose }) {
       aria-describedby="modal-modal-description"
       size="large"
     >
-     <Box className="rounded-md" sx={style}>
-        {isLogin ? (
-          <LoginForm toggleForm={toggleForm} handleClose={handleClose} />
+      <Box className="rounded-md" sx={style}>
+        {location.pathname === "/login" ? (
+          <LoginUserForm />
         ) : (
-          <RegisterForm toggleForm={toggleForm} />
+          <RegisterUserForm />
         )}
       </Box>
+
     </Modal>
 
 

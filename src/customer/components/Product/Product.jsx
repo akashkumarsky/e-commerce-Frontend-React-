@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogBackdrop,
@@ -21,17 +21,21 @@ import {
   PlusIcon,
   Squares2X2Icon,
 } from "@heroicons/react/20/solid";
-import { HomeSectionCardData } from "../HomeSectionCard/HomeSectionCardData";
 import ProductCart from "./ProductCart";
 import { filters, singleFilter } from "./FilterData";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import {
+  Backdrop,
+  CircularProgress,
   FormControl,
   FormControlLabel,
+  Pagination,
   Radio,
   RadioGroup,
 } from "@mui/material";
-import { Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { findProducts } from "../../../state/Product/Action";
 
 const sortOptions = [
   { name: "Price: Low to High", href: "#", current: false },
@@ -44,39 +48,116 @@ function classNames(...classes) {
 
 export default function Product() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const jwt = localStorage.getItem("jwt");
+  const param = useParams();
+  const { customersProduct } = useSelector((store) => store);
+  const location = useLocation();
+  const [isLoaderOpen, setIsLoaderOpen] = useState(false);
+
+  const handleLoderClose = () => {
+    setIsLoaderOpen(false);
+  };
+
+  // const filter = decodeURIComponent(location.search);
+  const decodedQueryString = decodeURIComponent(location.search);
+  const searchParams = new URLSearchParams(decodedQueryString);
+  const colorValue = searchParams.get("color");
+  const sizeValue = searchParams.get("size");
+  const price = searchParams.get("price");
+  const disccount = searchParams.get("disccout");
+  const sortValue = searchParams.get("sort");
+  const pageNumber = searchParams.get("page") || 1;
+  const stock = searchParams.get("stock");
+
+  // console.log("location - ", colorValue, sizeValue,price,disccount);
+
+  const handleSortChange = (value) => {
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("sort", value);
+    const query = searchParams.toString();
+    navigate({ search: `?${query}` });
+  };
+  const handlePaginationChange = (event, value) => {
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("page", value);
+    const query = searchParams.toString();
+    navigate({ search: `?${query}` });
+  };
+
+  useEffect(() => {
+    const [minPrice, maxPrice] =
+      price === null ? [0, 0] : price.split("-").map(Number);
+    const data = {
+      category: param.lavelThree,
+      colors: colorValue || [],
+      sizes: sizeValue || [],
+      minPrice: minPrice || 0,
+      maxPrice: maxPrice || 10000,
+      minDiscount: disccount || 0,
+      sort: sortValue || "price_low",
+      pageNumber: pageNumber - 1,
+      pageSize: 10,
+      stock: stock,
+    };
+  
+    console.log("🔍 Dispatching findProducts with data:", data);
+  
+    dispatch(findProducts(data));
+  }, [
+    param.lavelThree,
+    colorValue,
+    sizeValue,
+    price,
+    disccount,
+    sortValue,
+    pageNumber,
+    stock,
+  ]);
+  
 
   const handleFilter = (value, sectionId) => {
     const searchParams = new URLSearchParams(location.search);
-    let filterValue = searchParams.getAll(sectionId);
 
-    if (filterValue.length > 0 && filterValue[0].split(",").includes(value)) {
-      filterValue = filterValue[0].split(",").filter((item) => item !== value);
+    let filterValues = searchParams.getAll(sectionId);
 
-      if (filterValue.length === 0) {
+    if (filterValues.length > 0 && filterValues[0].split(",").includes(value)) {
+      filterValues = filterValues[0]
+        .split(",")
+        .filter((item) => item !== value);
+      if (filterValues.length === 0) {
         searchParams.delete(sectionId);
       }
+      console.log("includes");
     } else {
-      filterValue.push(value);
+      // Remove all values for the current section
+      // searchParams.delete(sectionId);
+      filterValues.push(value);
     }
 
-    if (filterValue.length > 0) {
-      searchParams.set(sectionId, filterValue.join(","));
-    }
+    if (filterValues.length > 0)
+      searchParams.set(sectionId, filterValues.join(","));
 
+    // history.push({ search: searchParams.toString() });
     const query = searchParams.toString();
-    navigate({ search: `?${query}` }); 
+    navigate({ search: `?${query}` });
   };
 
-  const handleRadioFilterChange=(e,sectionId)=>{
+  const handleRadioFilterChange = (e, sectionId) => {
     const searchParams = new URLSearchParams(location.search);
-    
-    searchParams.set(sectionId,e.target.value)
+    searchParams.set(sectionId, e.target.value);
     const query = searchParams.toString();
-    navigate({ search: `?${query}` }); 
+    navigate({ search: `?${query}` });
+  };
 
-  }
+  useEffect(() => {
+    if (customersProduct.loading) {
+      setIsLoaderOpen(true);
+    } else {
+      setIsLoaderOpen(false);
+    }
+  }, [customersProduct.loading]);
 
 
   return (
@@ -470,14 +551,37 @@ export default function Product() {
               {/* Product grid */}
               <div className="lg:col-span-4">
                 <div className="flex flex-wrap justify-center bg-gray-900 py-5">
-                  {HomeSectionCardData.map((item) => (
-                    <ProductCart product={item} />
-                  ))}
+                {customersProduct?.products?.content?.map((item) => (
+                      <ProductCart product={item} />
+                    ))}
+    
                 </div>
               </div>
             </div>
           </section>
         </main>
+      {/* pagination section */}
+      <section className="w-full px-[3.6rem]">
+          <div className="mx-auto px-4 py-5 flex justify-center shadow-lg border rounded-md">
+            <Pagination
+              count={customersProduct?.products?.totalPages}
+              color="primary"
+              className=""
+              onChange={handlePaginationChange}
+            />
+          </div>
+        </section>
+
+        {/* {backdrop} */}
+        <section>
+          <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={isLoaderOpen}
+            onClick={handleLoderClose}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        </section>
       </div>
     </div>
   );

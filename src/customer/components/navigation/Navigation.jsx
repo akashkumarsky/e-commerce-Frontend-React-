@@ -16,89 +16,72 @@ import {
   TabPanels,
 } from '@headlessui/react'
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import AuthModel from '../auth/AuthModel'
 import { Avatar, Button, Menu, MenuItem } from '@mui/material'
 import { deepPurple } from '@mui/material/colors'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUser, logout } from '../../../state/Auth/Action'
 import { navigation } from '../../../config/NavigationMenu'
+import { getCart } from '../../../state/Cart/Action'
 
 
 
 export default function Navigation() {
-
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { auth, cart } = useSelector((store) => store);
+  const [openAuthModal, setOpenAuthModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
-  const auth = useSelector(state => state.auth);
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
- 
-
+  const jwt = localStorage.getItem("jwt");
+  const location = useLocation();
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
     if (jwt) {
       dispatch(getUser(jwt));
+      dispatch(getCart(jwt));
     }
-  }, []);
-
-  const isAuthenticated = Boolean(localStorage.getItem('jwt'));
+  }, [jwt]);
 
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (event) => {
     setAnchorEl(null);
   };
+
+  const handleOpen = () => {
+    setOpenAuthModal(true);
+  };
+  const handleClose = () => {
+    setOpenAuthModal(false);
+  };
+
+  const handleCategoryClick = (category, section, item) => {
+    navigate(`/${category.id}/${section.id}/${item.id}`);
+  };
+
+  useEffect(() => {
+    if (auth.user) {
+      handleClose();
+    }
+    if (location.pathname === "/login" || location.pathname === "/register") {
+      navigate(-1);
+    }
+  }, [auth.user]);
 
   const handleLogout = () => {
-    localStorage.removeItem('jwt');
+    handleCloseUserMenu();
     dispatch(logout());
-    setAnchorEl(null);
   };
-
-  const handleAuthOpen = () => {
-    setAuthModalOpen(true);
-  };
-
-  const handleAuthClose = () => {
-    setAuthModalOpen(false);
-  };;
-
-  // Update mobile menu handlers
-  const handleMobileMenuOpen = () => {
-    setMobileMenuOpen(true);
-  };
-
-  const handleMobileMenuClose = () => {
-    setMobileMenuOpen(false);
-  };
-
-
-  const handleProfile = () => {
-    navigate('/profile');
+  const handleMyOrderClick = () => {
     handleCloseUserMenu();
-  }
-
-  const handleMyOrder = () => {
-    navigate('/myorder');
-    handleCloseUserMenu();
-  }
-
-  function handleCategoryClick(category, section, item) {
-    // Construct the URL dynamically
-    const url = `/${category.id}/${section.id}/${item.name.replace(/\s+/g, '-').toLowerCase()}`;
-    console.log("Generated URL:", url);
-
-    // Navigate to the URL or handle it as needed
-    window.location.href = url; // Or use React Router's `navigate(url)`
-  }
-
+    auth.user?.role === "ROLE_ADMIN"
+      ? navigate("/admin")
+      : navigate("/account/order");
+  };
 
 
 
@@ -108,7 +91,7 @@ export default function Navigation() {
   return (
     <div className="bg-gray-700">
       {/* Mobile menu */}
-      <Dialog open={mobileMenuOpen} onClose={handleMobileMenuClose} className="relative z-40 lg:hidden">
+      <Dialog open={open} onClose={setOpen} className="relative z-40 lg:hidden">
         <DialogBackdrop
           transition
           className="fixed inset-0 bg-black/25 transition-opacity duration-300 ease-linear data-[closed]:opacity-0"
@@ -122,7 +105,7 @@ export default function Navigation() {
             <div className="flex px-4 pb-2 pt-5">
               <button
                 type="button"
-                onClick={handleMobileMenuClose}
+                onClick={() => setOpen(false)}
                 className="relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-white"
               >
                 <span className="absolute -inset-0.5" />
@@ -229,7 +212,7 @@ export default function Navigation() {
         </div>
       </Dialog>
 
-      <AuthModel open={authModalOpen} handleClose={handleAuthClose} />
+      <AuthModel handleClose={handleClose} open={openAuthModal} />
 
       <header className="relative bg-gray-700">
         <p className="flex h-10 items-center justify-center bg-gray-800 px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
@@ -241,7 +224,7 @@ export default function Navigation() {
             <div className="flex h-16 items-center">
               <button
                 type="button"
-                onClick={handleMobileMenuOpen}
+                onClick={() => setOpen(true)}
                 className="relative rounded-md bg-white p-2 text-gray-400 lg:hidden"
               >
                 <span className="absolute -inset-0.5" />
@@ -315,7 +298,11 @@ export default function Navigation() {
                                         <li key={item.name} className="flex">
                                           <p
                                             onClick={() =>
-                                              handleCategoryClick(category, section, item)
+                                              handleCategoryClick(
+                                                category,
+                                                section,
+                                                item,
+                                              )
                                             }
                                             className="cursor-pointer text-white hover:text-gray-800"
                                           >
@@ -349,75 +336,96 @@ export default function Navigation() {
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:fle x-1 lg:items-center lg:justify-end lg:space-x-6">
 
-                  {isAuthenticated ? (
+                  {auth.user ? (
                     <div>
                       <Avatar
                         className="text-white"
                         onClick={handleUserClick}
-                        aria-controls={Boolean(anchorEl) ? "basic-menu" : undefined}
+                        aria-expanded={open ? "true" : undefined}
+                        aria-controls={open ? "basic-menu" : undefined}
                         aria-haspopup="true"
                         sx={{
                           bgcolor: deepPurple[500],
                           color: "white",
-                          cursor: "pointer",
+                          cursor: "pointer"
                         }}
                       >
-                        {auth.user?.firstName?.[0]?.toUpperCase()}
-                      </Avatar>
-                      <Menu
-                        id="basic-menu"
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={() => setAnchorEl(null)}
+                      {auth.user?.firstName[0].toUpperCase()}
+                    </Avatar>
+                      {/* <Button
+                        id="basic-button"
+                        aria-controls={open ? "basic-menu" : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? "true" : undefined}
+                        onClick={handleUserClick}
                       >
-                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                      </Menu>
-                    </div>
-                  ) : (
-                    <Button onClick={handleAuthOpen}>
-                      Signin
-                    </Button>
+                        Dashboard
+                      </Button> */}
+                  <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={openUserMenu}
+                    onClose={handleCloseUserMenu}
+                    MenuListProps={{
+                      "aria-labelledby": "basic-button",
+                    }}
+                  >
+                    <MenuItem onClick={handleMyOrderClick}>
+                      {auth.user?.role === "ROLE_ADMIN"
+                        ? "Admin Dashboard"
+                        : "My Orders"}
+                    </MenuItem>
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                  </Menu>
+                </div>
+                ) : (
+                <Button
+                  onClick={handleOpen}
+                  className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                >
+                  Signin
+                </Button>
                   )}
-                </div>
+              </div>
 
 
-                <div className="hidden lg:ml-8 lg:flex">
-                  <a href="#" className="flex items-center text-white hover:text-green-800">
-                    <img
-                      alt=""
-                      src="https://cdn.britannica.com/97/1597-050-008F30FA/Flag-India.jpg"
-                      className="block h-auto w-5 shrink-0"
-                    />
-                    <span className="ml-3 block text-sm font-medium">IND</span>
-                    <span className="sr-only">, change currency</span>
-                  </a>
-                </div>
+              <div className="hidden lg:ml-8 lg:flex">
+                <a href="#" className="flex items-center text-white hover:text-green-800">
+                  <img
+                    alt=""
+                    src="https://cdn.britannica.com/97/1597-050-008F30FA/Flag-India.jpg"
+                    className="block h-auto w-5 shrink-0"
+                  />
+                  <span className="ml-3 block text-sm font-medium">IND</span>
+                  <span className="sr-only">, change currency</span>
+                </a>
+              </div>
 
-                {/* Search */}
-                <div className="flex lg:ml-6">
-                  <a href="#" className="p-2 text-white hover:text-green-500">
-                    <span className="sr-only">Search</span>
-                    <MagnifyingGlassIcon aria-hidden="true" className="size-6" />
-                  </a>
-                </div>
+              {/* Search */}
+              <div className="flex lg:ml-6">
+                <a onClick={()=>navigate("/products/search")} className="p-2 text-white hover:text-green-500">
+                  <span className="sr-only">Search</span>
+                  <MagnifyingGlassIcon aria-hidden="true" className="size-6" />
+                </a>
+              </div>
 
-                {/* Cart */}
-                <div className="ml-4 flow-root lg:ml-6">
-                  <a href="#" className="group -m-2 flex items-center p-2">
-                    <ShoppingBagIcon
-                      aria-hidden="true"
-                      className="size-6 shrink-0 text-white group-hover:text-green-500"
-                    />
-                    <span className="ml-2 text-sm font-medium text-white group-hover:text-green-800">0</span>
-                    <span className="sr-only">items in cart, view bag</span>
-                  </a>
-                </div>
+              {/* Cart */}
+              <div className="ml-4 flow-root lg:ml-6">
+                <a onClick={() => navigate("/cart")} className="group -m-2 flex items-center p-2">
+                  <ShoppingBagIcon
+                    aria-hidden="true"
+                    className="size-6 shrink-0 text-white group-hover:text-green-500"
+                  />
+                  <span className="ml-2 text-sm font-medium text-white group-hover:text-green-800">{cart.cart?.totalItem}</span>
+                  <span className="sr-only">items in cart, view bag</span>
+                </a>
               </div>
             </div>
           </div>
-        </nav>
-      </header>
+        </div>
+      </nav>
+    </header>
 
-    </div>
+    </div >
   )
 }
