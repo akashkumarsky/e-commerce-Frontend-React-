@@ -101,9 +101,9 @@ export default function Product() {
       pageSize: 10,
       stock: stock,
     };
-  
+
     console.log("🔍 Dispatching findProducts with data:", data);
-  
+
     dispatch(findProducts(data));
   }, [
     param.lavelThree,
@@ -115,7 +115,7 @@ export default function Product() {
     pageNumber,
     stock,
   ]);
-  
+
 
   const handleFilter = (value, sectionId) => {
     const searchParams = new URLSearchParams(location.search);
@@ -223,7 +223,7 @@ export default function Product() {
                             <div className="flex h-5 shrink-0 items-center">
                               <div className="group grid size-4 grid-cols-1">
                                 <input
-                                  onChange={()=>handleFilter(option.value,section.id)}
+                                  onChange={() => handleFilter(option.value, section.id)}
                                   defaultValue={option.value}
                                   id={`filter-mobile-${section.id}-${optionIdx}`}
                                   name={`${section.id}[]`}
@@ -447,7 +447,7 @@ export default function Product() {
                               <div className="flex h-5 shrink-0 items-center">
                                 <div className="group grid size-4 grid-cols-1">
                                   <input
-                                    onChange={()=>handleFilter(option.value,section.id)}
+                                    onChange={() => handleFilter(option.value, section.id)}
                                     defaultValue={option.value}
                                     defaultChecked={option.checked}
                                     id={`filter-${section.id}-${optionIdx}`}
@@ -523,7 +523,7 @@ export default function Product() {
                             >
                               {section.options.map((option, optionIdx) => (
                                 <FormControlLabel
-                                onChange={(e)=>handleRadioFilterChange(e,section.id)}
+                                  onChange={(e) => handleRadioFilterChange(e, section.id)}
                                   key={optionIdx}
                                   value={option.value}
                                   control={
@@ -551,17 +551,17 @@ export default function Product() {
               {/* Product grid */}
               <div className="lg:col-span-4">
                 <div className="flex flex-wrap justify-center bg-gray-900 py-5">
-                {customersProduct?.products?.content?.map((item) => (
-                      <ProductCart product={item} />
-                    ))}
-    
+                  {customersProduct?.products?.content?.map((item) => (
+                    <ProductCart product={item} />
+                  ))}
+
                 </div>
               </div>
             </div>
           </section>
         </main>
-      {/* pagination section */}
-      <section className="w-full px-[3.6rem]">
+        {/* pagination section */}
+        <section className="w-full px-[3.6rem]">
           <div className="mx-auto px-4 py-5 flex justify-center shadow-lg border rounded-md">
             <Pagination
               count={customersProduct?.products?.totalPages}

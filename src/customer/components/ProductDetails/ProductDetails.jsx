@@ -1,13 +1,16 @@
-"use client";
 
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Radio, RadioGroup } from "@headlessui/react";
 import { Box, Button, Grid, LinearProgress, Rating } from "@mui/material";
 import ProductReviewCart from "./ProductReviewCart";
 import { HomeSectionCardData } from "../HomeSectionCard/HomeSectionCardData";
 import HomeSectionCard from "../HomeSectionCard/HomeSectionCard";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addItemToCart } from "../../../state/Cart/Action";
+import { findProductById } from "../../../state/Product/Action";
 
 const product = {
   name: "Basic Tee 6-Pack",
@@ -64,14 +67,30 @@ function classNames(...classes) {
 }
 
 export default function ProductDetails() {
-  const [selectedColor, setSelectedColor] = useState(product.colors[0]);
-  const [selectedSize, setSelectedSize] = useState(product.sizes[2]);
+  const [selectedSize, setSelectedSize] = useState();
+  const [activeImage, setActiveImage] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { customersProduct } = useSelector((store) => store);
+  const { productId } = useParams();
+  const jwt = localStorage.getItem("jwt");
+  // console.log("param",productId,customersProduct.product)
 
-  // Navigate to the product details page when the card is clicked
-  const handleaddtocart = () => {
-    navigate("/cart"); // Assuming `product.id` is the unique identifier
+  const handleSetActiveImage = (image) => {
+    setActiveImage(image);
   };
+
+  const handleSubmit = () => {
+    const data = { productId, size: selectedSize.name };
+    dispatch(addItemToCart({ data, jwt }));
+    navigate("/cart");
+  };
+
+  useEffect(() => {
+    const data = { productId: Number(productId), jwt };
+    dispatch(findProductById(data));
+    // dispatch(getAllReviews(productId));
+  }, [productId]);
 
   return (
     <div className="bg-gray-900 lg:px-20">
@@ -119,17 +138,18 @@ export default function ProductDetails() {
           <div className=" flex flex-col items-center">
             <div className=" overflow-hidden rounded-lg max-w-[30rem] max-h-[35rem]">
               <img
+                src={activeImage?.src || customersProduct.product?.imageUrl}
                 alt={product.images[0].alt}
-                src={product.images[0].src}
-                className="hidden size-full rounded-lg object-cover lg:block"
+                className="h-full w-full object-cover object-center"
               />
             </div>
             <div className="flex flex-wrap space-x-5  justify-center">
-              {product.images.map((item) => (
-                <div className="max-w-[5rem] max-h-[5rem] mt-4">
+              {product.images.map((image) => (
+                <div onClick={() => handleSetActiveImage(image)}
+                  className="max-w-[5rem] max-h-[5rem] mt-4">
                   <img
-                    alt={item.alt}
-                    src={item.src}
+                    alt={product.images[1].alt}
+                    src={image.src}
                     className="aspect-[3/2] w-full rounded-lg object-cover"
                   />
                 </div>
@@ -141,10 +161,10 @@ export default function ProductDetails() {
           <div className="lg:col-span-1 maxt-auto max-w-2xl px-4 pb-16 sm:px-6 lg:max-w-7xl lg:px-8 lg:pb-24 ">
             <div className="lg:col-span-2 l">
               <h1 className="text-lg lg:text-xl font-semibold text-white">
-                Kook N Keech
+                {customersProduct.product?.brand}
               </h1>
               <h1 className="text-lg lg:text-xl text-white opacity-60 pt-1">
-                Men Printed Round Neck Pure Cotton Blue T-Shirt
+                {customersProduct.product?.title}
               </h1>
             </div>
 
@@ -152,9 +172,9 @@ export default function ProductDetails() {
             <div className="mt-4 lg:row-span-3 lg:mt-0">
               <h2 className="sr-only">Product information</h2>
               <div className="flex space-x-5 item-center text-lg lg:text-xl text-white mt-3">
-                <p className="font-semibold">270</p>
-                <p className="line-through opacity-50">1098</p>
-                <p className="text-green-600 font-semibold">74 % off</p>
+                <p className="font-semibold">₹{customersProduct.product?.discountedPrice}</p>
+                <p className="line-through opacity-50">₹{customersProduct.product?.price}</p>
+                <p className="text-green-600 font-semibold">{customersProduct.product?.discountPersent}% Off</p>
               </div>
 
               {/* Reviews */}
@@ -174,73 +194,87 @@ export default function ProductDetails() {
                     454454 Ratings
                   </p>
                   <p className="ml-3 text-sm font-medium text-white hover:text-indigo-500">
-                    54545 Reviews
+                    {reviews.totalCount} Reviews
                   </p>
                 </div>
               </div>
 
-              <form className="mt-10">
+              <form className="mt-10" onSubmit={handleSubmit}>
                 {/* Sizes */}
                 <div className="mt-10">
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-medium text-white ">Size</h3>
-                    <a
-                      href="#"
-                      className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
-                    >
-                      Size guide
-                    </a>
                   </div>
-
-                  <fieldset aria-label="Choose a size" className="mt-4">
-                    <RadioGroup
-                      value={selectedSize}
-                      onChange={setSelectedSize}
-                      className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-4"
-                    >
+                  <RadioGroup
+                    value={selectedSize}
+                    onChange={setSelectedSize}
+                    className="mt-4"
+                  >
+                    <RadioGroup.Label className="sr-only">
+                      Choose a size
+                    </RadioGroup.Label>
+                    <div className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-10">
                       {product.sizes.map((size) => (
-                        <Radio
+                        <RadioGroup.Option
                           key={size.name}
                           value={size}
                           disabled={!size.inStock}
-                          className={classNames(
-                            size.inStock
-                              ? "cursor-pointer bg-white text-gray-900 shadow-sm"
-                              : "cursor-not-allowed bg-gray-50 text-gray-200",
-                            "group relative flex items-center justify-center rounded-md border px-4 py-3 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none data-[focus]:ring-2 data-[focus]:ring-indigo-500 sm:flex-1 sm:py-6"
-                          )}
+                          className={({ active }) =>
+                            classNames(
+                              size.inStock
+                                ? "cursor-pointer bg-white text-gray-900 shadow-sm"
+                                : "cursor-not-allowed bg-gray-50 text-gray-200",
+                              active ? "ring-1 ring-indigo-500" : "",
+                              "group relative flex items-center justify-center rounded-md border py-1 px-1 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6"
+                            )
+                          }
                         >
-                          <span>{size.name}</span>
-                          {size.inStock ? (
-                            <span
-                              aria-hidden="true"
-                              className="pointer-events-none absolute -inset-px rounded-md border-2 border-transparent group-data-[focus]:border group-data-[checked]:border-indigo-500"
-                            />
-                          ) : (
-                            <span
-                              aria-hidden="true"
-                              className="pointer-events-none absolute -inset-px rounded-md border-2 border-gray-200"
-                            >
-                              <svg
-                                stroke="currentColor"
-                                viewBox="0 0 100 100"
-                                preserveAspectRatio="none"
-                                className="absolute inset-0 size-full stroke-2 text-gray-200"
-                              >
-                                <line
-                                  x1={0}
-                                  x2={100}
-                                  y1={100}
-                                  y2={0}
-                                  vectorEffect="non-scaling-stroke"
+                          {({ active, checked }) => (
+                            <>
+                              <RadioGroup.Label as="span">
+                                {size.name}
+                              </RadioGroup.Label>
+                              {size.inStock ? (
+                                <span
+                                  className={classNames(
+                                    active ? "border" : "border-2",
+                                    checked
+                                      ? "border-indigo-500"
+                                      : "border-transparent",
+                                    "pointer-events-none absolute -inset-px rounded-md"
+                                  )}
+                                  aria-hidden="true"
                                 />
-                              </svg>
-                            </span>
+                              ) : (
+                                <span
+                                  aria-hidden="true"
+                                  className="pointer-events-none absolute -inset-px rounded-md border-2 border-gray-200"
+                                >
+                                  <svg
+                                    className="absolute inset-0 h-full w-full stroke-2 text-gray-200"
+                                    viewBox="0 0 100 100"
+                                    preserveAspectRatio="none"
+                                    stroke="currentColor"
+                                  >
+                                    <line
+                                      x1={0}
+                                      y1={100}
+                                      x2={100}
+                                      y2={0}
+                                      vectorEffect="non-scaling-stroke"
+                                    />
+                                  </svg>
+                                </span>
+                              )}
+                            </>
                           )}
-                        </Radio>
+                        </RadioGroup.Option>
                       ))}
-                    </RadioGroup>
-                  </fieldset>
+                    </div>
+                  </RadioGroup>
+
+
+
                 </div>
                 <div className="mt-6">
                   <Button
@@ -262,7 +296,7 @@ export default function ProductDetails() {
                         transform: "scale(1.05)", // Slightly enlarge the button on hover
                       },
                     }}
-                    onClick={handleaddtocart}
+                    // onClick={handleaddtocart}
                   >
                     Add to Cart
                   </Button>
@@ -276,7 +310,7 @@ export default function ProductDetails() {
                 <h3 className="sr-only ">Description</h3>
 
                 <div className="space-y-6">
-                  <p className="text-base text-white">{product.description}</p>
+                  <p className="text-base text-white">{customersProduct.product?.description}</p>
                 </div>
               </div>
 
@@ -315,9 +349,10 @@ export default function ProductDetails() {
             <Grid container spacing={7}>
               <Grid item xs={7}>
                 <div className="space-y-5">
-                  {[, 1, , 1, , 1, 1].map((item) => (
-                    <ProductReviewCart />
+                {customersProduct.product?.reviews.map((item, i) => (
+                    <ProductReviewCart item={item} />
                   ))}
+                 
                 </div>
               </Grid>
 
@@ -459,7 +494,7 @@ export default function ProductDetails() {
           <div className="flex flex-wrap space-y-5">
             {HomeSectionCardData.map((item, index) => (
               <HomeSectionCard
-               
+
                 imageUrl={item.imageUrl}
                 brand={item.brand}
                 title={item.title}
