@@ -1,30 +1,36 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const HomeProductCard = ({ product }) => {
-    const navigate = useNavigate();
-  
-    return (
-      <div
-        onClick={() => navigate(`/men/clothing/mens_kurta`)}
-        className="cursor-pointer flex flex-col items-center bg-white rounded-lg shadow-lg overflow-hidden w-[15rem] mx-3"
-      >
-        <div className="h-[13rem] w-[10rem]">
-          <img
-            className="object-cover object-top w-full h-full"
-            src={product?.image || product?.imageUrl}
-            alt={product?.title}
-          />
-        </div>
-  
-        <div className="p-4 ">
-          <h3 className="text-lg font-medium text-gray-900">
-            {product?.brand || product?.title}
-          </h3>
-          <p className="mt-2 text-sm text-gray-500">{product?.title}</p>
-        </div>
-      </div>
-    );
-  };
-  
-  export default HomeProductCard;
-  
+  const navigate = useNavigate();
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <div
+      onClick={() => navigate(`/product/${product?.id}`)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`cursor-pointer bg-white border rounded-lg shadow-md w-48 p-3 transition-transform duration-200 ${
+        isHovered ? "scale-105" : "scale-100"
+      }`}
+    >
+      <img
+        className="w-full h-48 object-cover rounded-md"
+        src={product?.imageUrl || product?.image}
+        alt={product?.title}
+      />
+      <h3 className="text-lg font-semibold mt-2 text-gray-800">
+        {product?.brand || "No Brand"}
+      </h3>
+      <p className="text-sm text-gray-600">
+        {product?.title?.length > 20 
+          ? `${product?.title.substring(0, 20)}...` 
+          : product?.title}
+      </p>
+      
+      <p className="text-sm font-semibold text-gray-900 mt-2">₹{product?.discountedPrice}</p>
+    </div>
+  );
+};
+
+export default HomeProductCard;

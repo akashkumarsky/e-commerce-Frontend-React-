@@ -38,7 +38,7 @@ const HomeProductSection = ({ section, data }) => {
   
     return (
       <div className="relative px-4 sm:px-6 lg:px-8 ">
-        <h2 className="text-2xl font-extrabold text-gray-900 py-5">{section}</h2>
+        <h2 className="text-2xl font-extrabold text-white py-5">{section}</h2>
         <div className="relative border p-5">
           <AliceCarousel
             disableButtonsControls
