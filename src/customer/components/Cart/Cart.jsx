@@ -13,8 +13,11 @@ const Cart = () => {
   console.log("cart ",cart)
 
   useEffect(() => {
+  if (jwt) {
     dispatch(getCart(jwt));
-  }, [jwt]);
+  }
+}, [dispatch, jwt]);
+
 
   
   const handleCheckout = () => {

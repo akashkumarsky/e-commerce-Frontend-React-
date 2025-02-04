@@ -81,6 +81,8 @@ export default function Navigation() {
   const handleLogout = () => {
     handleCloseUserMenu();
     dispatch(logout());
+    window.location.reload();
+    navigate("/");
   };
   const handleMyOrderClick = () => {
     handleCloseUserMenu();
