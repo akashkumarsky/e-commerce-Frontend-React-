@@ -23,15 +23,10 @@ export const navigation = {
             name: 'Clothing',
             items: [
               { name: 'Tops', id:"top", href: `{women/clothing/tops}` },
-              { name: 'Dresses', id:"women_dress", href: '#' },
-              { name: 'Women Jeans', id: 'women_jeans' },
-              { name: 'Lengha Choli', id: 'lengha_choli' },
-              { name: 'Sweaters', id: 'sweater' },
-              { name: 'T-Shirts', id: 't-shirt' },
-              { name: 'Jackets', id: 'jacket' },
-              { name: 'Gouns', id: 'gouns' },
-              { name: 'Sarees', id: 'saree' },
-              { name: 'Kurtas', id: 'kurtas' },
+              { name: 'Dresses', id:"women_dress", href: `{women/clothing/women_dress}` },
+              { name: 'Women Jeans', id: 'women_jeans', href: `{women/clothing/women_jeans}` },
+              { name: 'Lengha Choli', id: 'lengha_choli', href: `{women/clothing/lengha_choli}` },
+           
             ],
           },
           {
@@ -83,12 +78,12 @@ export const navigation = {
             name: 'Clothing',
             items: [
               { name: 'Mens Kurtas', id: 'mens_kurta' },
-              { name: 'Shirt', id: 'shirt' },
+              { name: 'Shirt', id: 'Shirts' },
               { name: 'Men Jeans', id: 'men_jeans' },
               { name: 'Sweaters', id: '#' },
               { name: 'T-Shirts', id: 't-shirt' },
               { name: 'Jackets', id: '#' },
-              { name: 'Activewear', id: '#' },
+             
               
             ],
           },
