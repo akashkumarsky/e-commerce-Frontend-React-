@@ -1,21 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CartItem from "./CartItem";
 import { Button, Divider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getCart } from "../../../state/Cart/Action";
 
 const Cart = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const jwt = localStorage.getItem("jwt");
+  const {cart}=useSelector(store=>store);
+  console.log("cart ",cart)
+
+  useEffect(() => {
+    dispatch(getCart(jwt));
+  }, [jwt]);
 
   
   const handleCheckout = () => {
     navigate("/checkout?step=1"); 
   };
   return (
+   <div>
+    {cart.cartItems.length>0 &&
     <div className="lg:grid grid-cols-3 lg:px-16 relative bg-gray-900">
       <div className="col-span-2">
-        {[1, 1, 1, 1, 1, 1].map((item) => (
-          <CartItem />
-        ))}
+      {cart.cartItems.map((item) => (
+            <>
+              <CartItem item={item} showButton={true}/>
+            </>
+          ))}
       </div>
       <div className="sticky px-5 top-0 h-[100vh] mt-5 lg:mt-0 text-white">
         <div className="">
@@ -25,13 +39,13 @@ const Cart = () => {
           <Divider sx={{ borderColor: "white" }} />
           <div className="space-y-3 font-semibold mb-4" >
             <div className="flex justify-between pt-3">
-              <span>price</span>
-              <span>₹4545</span>
+              <span>Price ({cart.cart?.totalItem} item)</span>
+              <span>₹{cart.cart.totalPrice}</span>
             </div>
             <div className="flex justify-between pt-3 ">
               <span>Discount</span>
               <span>
-                <p className="text-green-600">-₹1545</p>
+                <p className="text-green-600">-₹{cart.cart?.discounte}</p>
               </span>
             </div>
             <div className="flex justify-between pt-3 ">
@@ -40,10 +54,11 @@ const Cart = () => {
                 <p className="text-green-600">Free</p>
               </span>
             </div>
+           
             <Divider sx={{ borderColor: "white" }} />
             <div className="flex justify-between pt-3">
               <span>Total Amount</span>
-              <span>₹3000</span>
+              <span>₹{cart.cart?.totalDiscountedPrice}</span>
             </div>
           </div>
           <Button
@@ -72,6 +87,7 @@ const Cart = () => {
                   </Button>
         </div>
       </div>
+    </div>}
     </div>
   );
 };
