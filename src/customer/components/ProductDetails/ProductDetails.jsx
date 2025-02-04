@@ -17,8 +17,8 @@ const product = {
   price: "$192",
   href: "#",
   breadcrumbs: [
-    { id: 1, name: "Men", href: "#" },
-    { id: 2, name: "Clothing", href: "#" },
+    
+    { id: 1, name: "Clothing", href: "#" }
   ],
   images: [
     {
@@ -128,7 +128,7 @@ export default function ProductDetails() {
                 aria-current="page"
                 className="font-medium text-gray-500 hover:text-gray-600"
               >
-                {product.name}
+                {customersProduct.product?.brand}
               </a>
             </li>
           </ol>
@@ -203,8 +203,9 @@ export default function ProductDetails() {
                 {/* Sizes */}
                 <div className="mt-10">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-medium text-white ">Size</h3>
+                    <h3 className="text-sm font-medium text-gray-900">Size</h3>
                   </div>
+
                   <RadioGroup
                     value={selectedSize}
                     onChange={setSelectedSize}
@@ -272,35 +273,15 @@ export default function ProductDetails() {
                       ))}
                     </div>
                   </RadioGroup>
-
-
-
                 </div>
-                <div className="mt-6">
-                  <Button
-                    variant="contained"
-                    sx={{
-                      px: "1.5rem",
-                      py: "1rem",
-                      color: "white",
-                      bgcolor: "blue",
-                      borderRadius: "10px", // Rounded corners
-                      fontSize: "1rem", // Slightly larger font size for readability
-                      fontWeight: "bold", // Emphasize text
-                      textTransform: "uppercase", // Make text uppercase for prominence
-                      boxShadow: "0px 4px 10px rgba(144, 143, 143, 0.3)", // Add a subtle shadow for depth
-                      transition:
-                        "transform 0.2s ease-in-out, background-color 0.2s ease", // Smooth hover effect
-                      "&:hover": {
-                        bgcolor: "darkblue", // Change background color on hover
-                        transform: "scale(1.05)", // Slightly enlarge the button on hover
-                      },
-                    }}
-                    // onClick={handleaddtocart}
-                  >
-                    Add to Cart
-                  </Button>
-                </div>
+
+                <Button
+                  variant="contained"
+                  type="submit"
+                  sx={{ padding: ".8rem 2rem", marginTop: "2rem" }}
+                >
+                  Add To Cart
+                </Button>
               </form>
             </div>
 
