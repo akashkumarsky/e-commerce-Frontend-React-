@@ -10,7 +10,7 @@ const HomeProductSection = ({ section, data }) => {
   
   // Calculate total items and max index
   const totalItems = data.length;
-  const visibleItems = 6.5; // Adjust based on screen size
+  const visibleItems = 5.5; // Adjust based on screen size
   const maxIndex = Math.max(totalItems - visibleItems, 0);
 
   const slidePrev = () => {
