@@ -18,11 +18,11 @@ const Cart = () => {
 
   
   const handleCheckout = () => {
-    navigate("/checkout?step=1"); 
+    navigate("/checkout?step=2"); 
   };
   return (
    <div>
-    {cart.cartItems.length>0 &&
+    {cart?.cartItems?.length > 0 &&
     <div className="lg:grid grid-cols-3 lg:px-16 relative bg-gray-900">
       <div className="col-span-2">
       {cart.cartItems.map((item) => (

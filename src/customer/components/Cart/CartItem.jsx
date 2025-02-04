@@ -2,12 +2,14 @@ import { Button, IconButton } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { removeCartItem } from "../../../state/Cart/Action";
 
 const CartItem = ({ item, showButton }) => {
   const dispatch = useDispatch();
   const jwt = localStorage.getItem("jwt");
+  const { cart } = useSelector(store => store) || { cart: { cartItems: [] } };
+
 
   const handleRemoveItemFromCart = () => {
     const data = { cartItemId: item?.id, jwt };
