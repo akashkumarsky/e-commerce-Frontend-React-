@@ -1,16 +1,59 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import AddressCart from '../Addresscart/AddressCart'
 import CartItem from '../Cart/CartItem'
 import { Button, Divider } from '@mui/material'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { getOrderById } from '../../../state/Order/Action'
+import { useDispatch, useSelector } from 'react-redux'
 
-const OrderSummery = () => {
+const OrderSummery = ({ orderId }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const jwt = localStorage.getItem("jwt");
+  const { order } = useSelector(state => state.order) || {};
+  const { auth } = useSelector((store) => store);
+  const { cart } = useSelector(store => store) || { cart: { cartItems: [] } };
+  const cartItems = cart.cartItems || [];
+  const { selectedAddress } = useSelector((state) => state.address || {});
+  
+
+
+
+
+
+
+
+
+  console.log("Order ID: ", orderId);
+
+
+
+  useEffect(() => {
+    if (orderId) {
+      dispatch(getOrderById(orderId));
+    }
+  }, [orderId, dispatch]);
+
+
+
+  // const handleCreatePayment = () => {
+  //   const data = { orderId: order.order?.id, jwt }
+  //   dispatch(createPayment(data))
+  // }
+
+
   return (
     <div className='p-5 shadow-lg rounded-s-md border'>
-      <AddressCart />
+      <h1 className='text-2xl text-center font-semibold'>Order Summery</h1>
+      <div>
+      <AddressCart address={order?.shippingAddress || selectedAddress || auth?.user?.addresses[0]} />
+
+      </div>
       <div className="lg:grid grid-cols-3 lg:px-16 relative bg-gray-900">
         <div className="col-span-2">
-          {[1, 1, 1, 1, 1, 1].map((item) => (
-            <CartItem />
+          {cartItems.length > 0 && cartItems.map((item) => (
+            <CartItem key={item.id} item={item} showButton={true} />
           ))}
         </div>
         <div className="sticky px-5 top-0 h-[100vh] mt-5 lg:mt-0 text-white">
@@ -49,17 +92,17 @@ const OrderSummery = () => {
                 px: "1.5rem",
                 py: "1rem",
                 color: "white",
-                bgcolor: "blue-600",
-                borderRadius: "10px", // Rounded corners
-                fontSize: "1rem", // Slightly larger font size for readability
-                fontWeight: "bold", // Emphasize text
-                textTransform: "uppercase", // Make text uppercase for prominence
-                boxShadow: "0px 4px 10px rgba(144, 143, 143, 0.3)", // Add a subtle shadow for depth
+                bgcolor: "#1E3A8A",
+                borderRadius: "10px",
+                fontSize: "1rem",
+                fontWeight: "bold",
+                textTransform: "uppercase",
+                boxShadow: "0px 4px 10px rgba(144, 143, 143, 0.3)",
                 transition:
-                  "transform 0.2s ease-in-out, background-color 0.2s ease", // Smooth hover effect
+                  "transform 0.2s ease-in-out, background-color 0.2s ease",
                 "&:hover": {
-                  bgcolor: "darkblue", // Change background color on hover
-                  transform: "scale(1.05)", // Slightly enlarge the button on hover
+                  bgcolor: "darkblue",
+                  transform: "scale(1.05)",
                 },
               }}
             >
