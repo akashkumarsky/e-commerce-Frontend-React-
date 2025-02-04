@@ -38,6 +38,8 @@ export default function Navigation() {
   const jwt = localStorage.getItem("jwt");
   const location = useLocation();
 
+  const userInitial = auth?.user?.firstName?.[0]?.toUpperCase() || '';
+
   useEffect(() => {
     if (jwt) {
       dispatch(getUser(jwt));
@@ -47,6 +49,7 @@ export default function Navigation() {
 
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
+    
   };
   const handleCloseUserMenu = (event) => {
     setAnchorEl(null);
@@ -59,8 +62,11 @@ export default function Navigation() {
     setOpenAuthModal(false);
   };
 
-  const handleCategoryClick = (category, section, item) => {
+ 
+
+  const handleCategoryClick = (category, section, item, close) => {
     navigate(`/${category.id}/${section.id}/${item.id}`);
+    close();
   };
 
   useEffect(() => {
@@ -255,10 +261,9 @@ export default function Navigation() {
                         </PopoverButton>
                       </div>
 
-                      <PopoverPanel
-                        transition
-                        className="absolute inset-x-0 top-full z-50 text-sm text-gray-500 transition data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in bg-white shadow-lg"
-                      >
+                      <PopoverPanel>
+                        {({ close }) => (
+                          <div className="absolute inset-x-0 top-full z-50 text-sm text-gray-500 transition data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in bg-white shadow-lg">
                         {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow */}
                         <div aria-hidden="true" className="absolute inset-0 top-1/2 bg-white shadow" />
 
@@ -297,14 +302,15 @@ export default function Navigation() {
                                       {section.items.map((item) => (
                                         <li key={item.name} className="flex">
                                           <p
+                                            className="cursor-pointer text-white"
                                             onClick={() =>
                                               handleCategoryClick(
                                                 category,
                                                 section,
                                                 item,
+                                                close
                                               )
                                             }
-                                            className="cursor-pointer text-white hover:text-gray-800"
                                           >
                                             {item.name}
                                           </p>
@@ -318,6 +324,8 @@ export default function Navigation() {
                             </div>
                           </div>
                         </div>
+                        </div>
+                        )}
                       </PopoverPanel>
                     </Popover>
                   ))}
@@ -350,7 +358,7 @@ export default function Navigation() {
                           cursor: "pointer"
                         }}
                       >
-                      {auth.user?.firstName[0].toUpperCase()}
+                   {userInitial}
                     </Avatar>
                       {/* <Button
                         id="basic-button"
