@@ -90,7 +90,7 @@ export default function ProductDetails() {
       return;
     }
     setError(false);
-    
+
     try {
       const data = { productId, size: selectedSize.name };
       dispatch(addItemToCart({ data, jwt }));
@@ -99,7 +99,7 @@ export default function ProductDetails() {
       console.error("Error adding item to cart:", error);
       setError(true);
     }
-    };
+  };
 
   useEffect(() => {
     const data = { productId: Number(productId), jwt };
@@ -212,51 +212,51 @@ export default function ProductDetails() {
                   </div>
 
                   <RadioGroup value={selectedSize} onChange={setSelectedSize} className="mt-4">
-        <RadioGroup.Label className="sr-only">Choose a size</RadioGroup.Label>
-        <div className="grid xs:grid-cols-4 m-1 gap-4 sm:grid-cols-8 lg:grid-cols-10">
-          {product.sizes.map((size) => (
-            <RadioGroup.Option
-              key={size.name}
-              value={size}
-              disabled={!size.inStock}
-              className={({ active }) =>
-                `${size.inStock ? "cursor-pointer bg-white text-gray-900 shadow-sm" : "cursor-not-allowed bg-gray-50 text-gray-200"}
+                    <RadioGroup.Label className="sr-only">Choose a size</RadioGroup.Label>
+                    <div className="grid xs:grid-cols-4 m-1 gap-4 sm:grid-cols-8 lg:grid-cols-10">
+                      {product.sizes.map((size) => (
+                        <RadioGroup.Option
+                          key={size.name}
+                          value={size}
+                          disabled={!size.inStock}
+                          className={({ active }) =>
+                            `${size.inStock ? "cursor-pointer bg-white text-gray-900 shadow-sm" : "cursor-not-allowed bg-gray-50 text-gray-200"}
                 ${active ? "ring-1 ring-indigo-500" : ""}
                 group relative flex items-center justify-center rounded-md border py-1 px-1 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6`
-              }
-            >
-              {({ active, checked }) => (
-                <>
-                  <RadioGroup.Label as="span">{size.name}</RadioGroup.Label>
-                  {size.inStock ? (
-                    <span
-                      className={`${active ? "border" : "border-2"} 
+                          }
+                        >
+                          {({ active, checked }) => (
+                            <>
+                              <RadioGroup.Label as="span">{size.name}</RadioGroup.Label>
+                              {size.inStock ? (
+                                <span
+                                  className={`${active ? "border" : "border-2"} 
                       ${checked ? "border-indigo-700" : "border-transparent"} 
                       pointer-events-none absolute -inset-px rounded-md`}
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <span
-                      aria-hidden="true"
-                      className="pointer-events-none absolute -inset-px rounded-md border-2 border-gray-200"
-                    >
-                      <svg
-                        className="absolute inset-0 h-full w-full stroke-2 text-gray-200"
-                        viewBox="0 0 100 100"
-                        preserveAspectRatio="none"
-                        stroke="currentColor"
-                      >
-                        <line x1={0} y1={100} x2={100} y2={0} vectorEffect="non-scaling-stroke" />
-                      </svg>
-                    </span>
-                  )}
-                </>
-              )}
-            </RadioGroup.Option>
-          ))}
-        </div>
-      </RadioGroup>
-      {error && <p className="text-red-500 text-sm mt-2">Please select a size before continuing.</p>}
+                                  aria-hidden="true"
+                                />
+                              ) : (
+                                <span
+                                  aria-hidden="true"
+                                  className="pointer-events-none absolute -inset-px rounded-md border-2 border-gray-200"
+                                >
+                                  <svg
+                                    className="absolute inset-0 h-full w-full stroke-2 text-gray-200"
+                                    viewBox="0 0 100 100"
+                                    preserveAspectRatio="none"
+                                    stroke="currentColor"
+                                  >
+                                    <line x1={0} y1={100} x2={100} y2={0} vectorEffect="non-scaling-stroke" />
+                                  </svg>
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </RadioGroup.Option>
+                      ))}
+                    </div>
+                  </RadioGroup>
+                  {error && <p className="text-red-500 text-sm mt-2">Please select a size before continuing.</p>}
                 </div>
 
                 <Button
@@ -322,13 +322,20 @@ export default function ProductDetails() {
           <div className="border p-5">
             <Grid container spacing={7}>
               <Grid item xs={7}>
-                <div className="space-y-5">
-                  {customersProduct.product?.reviews.map((item, i) => (
-                    <ProductReviewCart item={item} />
+                <div
+                  className="space-y-5"
+                  style={{
+                    maxHeight: "400px", // Adjust height as needed
+                    overflowY: "auto",
+                    paddingRight: "8px", // Optional: Prevent content from cutting off due to scrollbar
+                  }}
+                >
+                  {[1, 1, 1, 1, 1, 1, 1].map((item, i) => (
+                    <ProductReviewCart key={i} item={item} />
                   ))}
-
                 </div>
               </Grid>
+
 
               <Grid item xs={5}>
                 <h1 className="text-xl font-semibold pb-1 text-white">
