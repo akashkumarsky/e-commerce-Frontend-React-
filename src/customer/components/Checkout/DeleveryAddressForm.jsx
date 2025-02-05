@@ -36,37 +36,55 @@ const DeliveryAddressForm = ({ handleNext }) => {
   };
 
   const handleCreateOrder = (item) => {
-    dispatch(createOrder({ address:item, jwt, navigate }));
+    dispatch(createOrder({ address: item, jwt, navigate }));
     handleNext();
   };
 
 
- 
-  
+
+
 
   return (
+    <div className="bg-gray-900 -mb-5">
     <Grid container spacing={4}>
       <Grid item xs={12} lg={5}>
-        <Box className="border rounded-md shadow-md h-[30.5rem] overflow-y-scroll">
-          {auth.user?.addresses.map((item) => (
+        <Box className="border rounded-md shadow-md h-[30.5rem] overflow-y-scroll ">
+          {auth.user?.addresses.slice().reverse().map((item) => (
             <div key={item.id} className="p-5 py-7 border-b cursor-pointer">
               <div onClick={() => handleSelectAddress(item)}>
                 <AddressCart address={item} />
               </div>
               {selectedAddress?.id === item.id && (
-                <Button
-                  sx={{ mt: 2 }}
-                  size="large"
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleCreateOrder(item)}
-                >
-                  Deliver Here
-                </Button>
+                <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                  <Button
+                    sx={{
+                      px: 3,
+                      py: 1.5,
+                      borderRadius: 2,
+                      backgroundColor: "primary.main",
+                      color: "white",
+                      transition: "all 0.3s ease-in-out",
+                      boxShadow: 2,
+                      "&:hover": {
+                        backgroundColor: "primary.dark",
+                        transform: "scale(1.05)",
+                      },
+                      "&:active": {
+                        transform: "scale(0.98)",
+                      },
+                    }}
+                    size="large"
+                    variant="contained"
+                    onClick={() => handleCreateOrder(item)}
+                  >
+                    Deliver Here
+                  </Button>
+                </Box>
               )}
             </div>
           ))}
         </Box>
+
       </Grid>
 
       <Grid item xs={12} lg={7}>
@@ -100,16 +118,41 @@ const DeliveryAddressForm = ({ handleNext }) => {
                   />
                 </Grid>
               ))}
-              <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Button sx={{ padding: ".9rem 1.5rem" }} size="large" type="submit" variant="contained" color="primary">
+              <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+                <Button
+                  sx={{
+                    px: 3,
+                    py: 1.5,
+                    borderRadius: 2,
+                    fontSize: "1rem",
+                    fontWeight: "bold",
+                    backgroundColor: "primary.main",
+                    color: "white",
+                    transition: "all 0.3s ease-in-out",
+                    boxShadow: 2,
+                    "&:hover": {
+                      backgroundColor: "primary.dark",
+                      transform: "scale(1.05)", // Slight zoom effect
+                    },
+                    "&:active": {
+                      transform: "scale(0.98)", // Subtle press effect
+                    },
+                  }}
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                >
                   Save Address
                 </Button>
               </Grid>
+
             </Grid>
           </form>
         </Box>
       </Grid>
     </Grid>
+    </div>
   );
 };
 
