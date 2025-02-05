@@ -22,7 +22,7 @@ import {
   Squares2X2Icon,
 } from "@heroicons/react/20/solid";
 import ProductCart from "./ProductCart";
-import { filters, singleFilter } from "./FilterData";
+import { filters, singleFilter, sortOptions } from "./FilterData";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import {
   Backdrop,
@@ -37,10 +37,7 @@ import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from "
 import { useDispatch, useSelector } from "react-redux";
 import { findProducts } from "../../../state/Product/Action";
 
-const sortOptions = [
-  { name: "Price: Low to High", href: "#", current: false },
-  { name: "Price: High to Low", href: "#", current: false },
-];
+
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -66,7 +63,7 @@ export default function Product() {
   const colorValue = searchParams.get("color");
   const sizeValue = searchParams.get("size");
   const price = searchParams.get("price");
-  const disccount = searchParams.get("disccout");
+  const disccount = searchParams.get("disccount");
   const sortValue = searchParams.get("sort");
   const pageNumber = searchParams.get("page") || 1;
   const stock = searchParams.get("stock");
@@ -161,7 +158,7 @@ export default function Product() {
 
 
   return (
-    <div className="bg-gray-900">
+    <div className="bg-gray-900 mt-0">
       <div>
         {/* Mobile filter dialog */}
         <Dialog
@@ -339,8 +336,8 @@ export default function Product() {
           </div>
         </Dialog>
 
-        <main className="mx-auto px-4 sm:px-6 lg:px-20">
-          <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
+        <main className="mx-auto  px-4 sm:px-6 lg:px-20">
+          <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-5">
             <h1 className="text-4xl font-bold tracking-tight text-white">
               New Arrivals
             </h1>
@@ -363,19 +360,22 @@ export default function Product() {
                 >
                   <div className="py-1 bg-gray-700">
                     {sortOptions.map((option) => (
-                      <MenuItem key={option.name}>
-                        <a
-                          href={option.href}
-                          className={classNames(
-                            option.current
-                              ? "font-medium text-white"
-                              : "text-white",
-                            "block px-4 py-2 text-sm data-[focus]:bg-black data-[focus]:outline-none"
-                          )}
-                        >
-                          {option.name}
-                        </a>
-                      </MenuItem>
+                      <Menu.Item key={option.name}>
+                        {({ active }) => (
+                          <p
+                            onClick={() => handleSortChange(option.query)}
+                            className={classNames(
+                              option.current
+                                ? "font-medium text-white"
+                                : "text-gray-700",
+                              active ? "bg-gray-100" : "",
+                              "block px-4 py-2 text-sm cursor-pointer"
+                            )}
+                          >
+                            {option.name}
+                          </p>
+                        )}
+                      </Menu.Item>
                     ))}
                   </div>
                 </MenuItems>
@@ -425,7 +425,7 @@ export default function Product() {
                     >
                       <h3 className="-my-3 flow-root">
                         <DisclosureButton className="group flex w-full items-center justify-between bg-gray-700 py-3 text-sm text-white hover:text-gray-500">
-                          <span className="font-medium  text-white">
+                          <span className="font-medium pl-4  text-white">
                             {section.name}
                           </span>
                           <span className="ml-6 flex items-center">
@@ -443,7 +443,7 @@ export default function Product() {
                       <DisclosurePanel className="pt-6">
                         <div className="space-y-4">
                           {section.options.map((option, optionIdx) => (
-                            <div key={option.value} className="flex gap-3">
+                            <div key={option.value} className="flex gap-3 pl-3">
                               <div className="flex h-5 shrink-0 items-center">
                                 <div className="group grid size-4 grid-cols-1">
                                   <input
@@ -497,7 +497,7 @@ export default function Product() {
                     >
                       <h3 className="-my-3 flow-root">
                         <DisclosureButton className="group flex w-full items-center justify-between bg-gray-700 py-3 text-sm text-white hover:text-gray-500">
-                          <span className="font-medium text-white">
+                          <span className="font-medium text-white pl-3">
                             {section.name}
                           </span>
                           <span className="ml-6 flex items-center">

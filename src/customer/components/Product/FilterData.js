@@ -15,6 +15,7 @@ export const filters = [
     name: "Color",
     options: [
       { value: "white", label: "White" },
+      { value: "black", label: "Black" },
       { value: "beige", label: "Beige" },
       { value: "blue", label: "Blue" },
       { value: "brown", label: "Brown" },
@@ -49,7 +50,7 @@ export const singleFilter = [
     ],
   },
   {
-    id: "discount",
+    id: "disccount",
     name: "Discount Range",
     options: [
       { value: "10", label: "10% and above" },
@@ -70,4 +71,11 @@ export const singleFilter = [
       { value: "out_of_stock", label: "Out Of Stock" },
     ],
   },
+];
+
+
+export const sortOptions = [
+  
+  { name: "Price: Low to High", query: "price_low", current: false },
+  { name: "Price: High to Low", query: "price_high", current: false },
 ];
