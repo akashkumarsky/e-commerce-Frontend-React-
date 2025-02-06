@@ -10,8 +10,7 @@ import {
   GET_ORDER_HISTORY_REQUEST,
   GET_ORDER_HISTORY_SUCCESS,
 } from "./ActionType";
-import api, { API_BASE_URL } from "../../../config/api";
-
+import { API_BASE_URL } from "../../config/ApiConfig";
 export const createOrder = (reqData) => async (dispatch) => {
   console.log("req data ", reqData);
   try {
