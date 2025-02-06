@@ -12,7 +12,7 @@ const OrderSummery = ({ orderId }) => {
   const { order } = useSelector(state => state.order) || {};
   const { auth } = useSelector((store) => store);
   const { cart } = useSelector(store => store) || { cart: { cartItems: [] } };
-  const cartItems = cart.cartItems || [];
+  const cartItems = cart?.cartItems || [];
   const { selectedAddress } = useSelector((state) => state.address || {});
 
   useEffect(() => {
@@ -20,6 +20,10 @@ const OrderSummery = ({ orderId }) => {
       dispatch(getOrderById(orderId));
     }
   }, [orderId, dispatch]);
+
+  console.log("Cart state:", cart);
+console.log("Order state:", order);
+
 
   return (
     <div className="p-6 shadow-lg rounded-lg border bg-gray-900 text-white">
@@ -30,30 +34,33 @@ const OrderSummery = ({ orderId }) => {
 
       {/* Address Section */}
       <div className="mb-6">
-        <AddressCart address={order?.shippingAddress || selectedAddress || auth?.user?.addresses[0]} />
+        <AddressCart address={order?.shippingAddress || selectedAddress || auth?.user?.addresses?.[auth?.user?.addresses?.length - 1]} />
+      
       </div>
 
       {/* Cart Items & Price Details */}
       <div className="lg:grid grid-cols-3 gap-6 lg:px-12 bg-gray-800 rounded-lg shadow-md p-4">
         {/* Cart Items */}
         <div className="col-span-2 space-y-4">
-          {cartItems.length > 0 && cartItems.map((item) => (
+          {cartItems?.length > 0 && cartItems?.map((item) => (
             <CartItem key={item.id} item={item} showButton={true} />
           ))}
+
         </div>
 
-       
+
 
         {/* Price Details */}
         <div className="sticky top-0 h-auto lg:mt-0 bg-gray-900 p-5 shadow-md rounded-lg">
           <div className="border p-5  shadow-lg rounded-md text-white">
-          <p className="font-bold opacity-60 pb-4 uppercase">Price Details</p>
+            <p className="font-bold opacity-60 pb-4 uppercase">Price Details</p>
             <Divider sx={{ backgroundColor: 'white' }} />
 
             <div className="space-y-3 font-semibold mt-4">
               <div className="flex justify-between">
-                <span>Price ({order?.totalItem || 0} item)</span>
-                <span>₹{order?.totalPrice || 0}</span>
+                <span>Price ({order?.totalItem ?? 0} item)</span>
+                <span>₹{order?.totalPrice ?? 0}</span>
+
               </div>
               <div className="flex justify-between">
                 <span>Discount</span>
@@ -71,6 +78,7 @@ const OrderSummery = ({ orderId }) => {
             </div>
 
             <Button
+              onClick={() => navigate(`/payment/${orderId}`)}
               variant="contained"
               type="submit"
               sx={{
@@ -90,6 +98,7 @@ const OrderSummery = ({ orderId }) => {
               }}
             >
               Proceed to Payment
+
             </Button>
           </div>
         </div>

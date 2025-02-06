@@ -32,7 +32,7 @@ const DeliveryAddressForm = ({ handleNext }) => {
     };
     dispatch(createOrder({ address, jwt, navigate }));
     // after perfoming all the opration
-    // handleNext();
+    handleNext();
   };
 
   const handleCreateOrder = (item) => {
