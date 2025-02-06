@@ -34,7 +34,7 @@ export const findProducts = (reqData) => async (dispatch) => {
     sort,
     pageNumber,
     pageSize,
-  } = reqData;
+  } = reqData || {};
 
   try {
     dispatch({ type: FIND_PRODUCTS_BY_CATEGORY_REQUEST });
