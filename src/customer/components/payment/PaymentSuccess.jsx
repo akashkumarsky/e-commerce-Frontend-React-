@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { updatePayment } from "../../../state/Payment/Action";
+import { getOrderById } from "../../../state/CustomerOrder/Action";
+import { Alert, AlertTitle, Grid } from "@mui/material";
+import OrderTracker from "../Order/OrderTracker";
+import AddressCart from '../Addresscart/AddressCart';
 
 const PaymentSuccess = () => {
   // razorpay_payment_link_reference_id
@@ -33,7 +38,7 @@ const PaymentSuccess = () => {
   }, [orderId, paymentId]);
 
   return (
-    <div className="px-2 lg:px-36">
+    <div className="px-2 lg:px-36 bg-gray-900 text-white">
       <div className="flex flex-col justify-center items-center">
         <Alert
           variant="filled"
@@ -45,7 +50,7 @@ const PaymentSuccess = () => {
         </Alert>
       </div>
 
-      <OrderTraker activeStep={1}/>
+      <OrderTracker activeStep={1}/>
 
       <Grid container className="space-y-5 py-5 pt-20">
         {order.order?.orderItems.map((item) => (
@@ -74,7 +79,7 @@ const PaymentSuccess = () => {
               </div>
             </Grid>
             <Grid item>
-              <AddressCard address={order.order?.shippingAddress} />
+            <AddressCart address={order.order?.shippingAddress} />
             </Grid>
           </Grid>
         ))}
