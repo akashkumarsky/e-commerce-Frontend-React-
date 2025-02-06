@@ -10,6 +10,7 @@ import Order from '../customer/components/Order/Order'
 import OrderDetails from '../customer/components/Order/OrderDetails'
 import ProductDetails from '../customer/components/ProductDetails/ProductDetails'
 import PaymentSuccess from '../customer/components/payment/PaymentSuccess'
+import SearchProduct from '../customer/components/Product/SearchProduct'
 
 
 
@@ -31,7 +32,7 @@ const CustomerRoutes = () => {
      <Route path="/register" element={<Homepage />}></Route>
 
         <Route path="/" element={<Homepage />}></Route>
-        {/* <Route path="/products/search" element={<SearchProduct/>}></Route> */}
+        <Route path="/products/search" element={<SearchProduct/>}></Route>
         <Route path="/home" element={<Homepage />}></Route>
         {/* <Route path="/about" element={<About />}></Route> */}
         {/* <Route path="/privaciy-policy" element={<PrivacyPolicy />}></Route>
