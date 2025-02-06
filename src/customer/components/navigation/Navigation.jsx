@@ -92,11 +92,6 @@ export default function Navigation() {
       : navigate("/account/order");
   };
 
-
-
-
-
-
   return (
     <div className="bg-gray-700">
       {/* Mobile menu */}
