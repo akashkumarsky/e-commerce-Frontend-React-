@@ -2,18 +2,23 @@ import React, { useEffect } from 'react';
 import AddressCart from '../Addresscart/AddressCart';
 import CartItem from '../Cart/CartItem';
 import { Button, Divider } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { getOrderById } from '../../../state/Order/Action';
 import { useDispatch, useSelector } from 'react-redux';
+import { createPayment } from '../../../state/Payment/Action';
 
-const OrderSummery = ({ orderId }) => {
-  const navigate = useNavigate();
+const OrderSummery = ({orderId}) => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const { order } = useSelector(state => state.order) || {};
+
   const { auth } = useSelector((store) => store);
   const { cart } = useSelector(store => store) || { cart: { cartItems: [] } };
   const cartItems = cart?.cartItems || [];
   const { selectedAddress } = useSelector((state) => state.address || {});
+  const  jwt = localStorage.getItem("jwt");
+
+  console.log("orderId : "+ orderId);
 
   useEffect(() => {
     if (orderId) {
@@ -23,6 +28,25 @@ const OrderSummery = ({ orderId }) => {
 
   console.log("Cart state:", cart);
 console.log("Order state:", order);
+
+
+console.log("Final orderId before payment:", orderId);
+
+const handleCreatePayment = () => {
+  const paymentOrderId = order?.id || orderId; // Use order ID from Redux OR fallback to orderId from URL
+
+  if (!paymentOrderId) {
+    console.error("Order ID is missing. Cannot proceed with payment.");
+    return;
+  }
+
+  const data = { orderId: paymentOrderId, jwt };
+  console.log("Sending payment request:", data); // Debugging output
+  dispatch(createPayment(data));
+  console.log("Updated order from Redux:", order);
+
+};
+
 
 
   return (
@@ -78,7 +102,7 @@ console.log("Order state:", order);
             </div>
 
             <Button
-              onClick={() => navigate(`/payment/${orderId}`)}
+              onClick={handleCreatePayment}
               variant="contained"
               type="submit"
               sx={{

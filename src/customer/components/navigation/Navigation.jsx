@@ -88,7 +88,7 @@ export default function Navigation() {
   const handleMyOrderClick = () => {
     handleCloseUserMenu();
     auth.user?.role === "ROLE_ADMIN"
-      ? navigate("/admin")
+      ? navigate("/admin/products")
       : navigate("/account/order");
   };
 
@@ -340,6 +340,7 @@ export default function Navigation() {
                 </div>
               </PopoverGroup>
               <div className="ml-auto flex items-center">
+
                 <div className="hidden lg:flex lg:fle x-1 lg:items-center lg:justify-end lg:space-x-6">
 
                   {auth.user ? (
@@ -402,7 +403,7 @@ export default function Navigation() {
                     src="https://cdn.britannica.com/97/1597-050-008F30FA/Flag-India.jpg"
                     className="block h-auto w-5 shrink-0"
                   />
-                  <span className="ml-3 block text-sm font-medium">IND</span>
+                  <span className="ml-3 block text-sm font-medium sr-only">IND</span>
                   <span className="sr-only">, change currency</span>
                 </a>
               </div>

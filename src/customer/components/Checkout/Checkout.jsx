@@ -82,7 +82,7 @@ export default function Checkout() {
           <React.Fragment>
             <div className="my-5">
               {step === "2" ? (
-                <DeleveryAddressForm handleNext={handleNext} />
+                <DeleveryAddressForm orderId={orderId} handleNext={handleNext} />
               ) : step === "3" ? (
                 <OrderSummery orderId={orderId} />
               ) : step === "4" ? (

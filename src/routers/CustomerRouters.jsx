@@ -11,6 +11,8 @@ import OrderDetails from '../customer/components/Order/OrderDetails'
 import ProductDetails from '../customer/components/ProductDetails/ProductDetails'
 import PaymentSuccess from '../customer/components/payment/PaymentSuccess'
 import SearchProduct from '../customer/components/Product/SearchProduct'
+import ProductsTable from '../admin/Table/ProductsTable'
+
 
 
 
@@ -47,6 +49,10 @@ const CustomerRoutes = () => {
         <Route path="/checkout" element={<Checkout />}></Route>
         <Route path="/payment/:orderId" element={<PaymentSuccess />}></Route>
         {/* <Route path="*" element={<NotFound />} /> */}
+
+
+       
+       
       </Routes>
       <Footer/>
     

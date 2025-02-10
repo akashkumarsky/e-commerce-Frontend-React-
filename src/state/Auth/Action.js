@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { API_BASE_URL } from '../../config/ApiConfig';
-import { GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS } from './ActionType';
+import { GET_ALL_CUSTOMERS_FAILURE, GET_ALL_CUSTOMERS_REQUEST, GET_ALL_CUSTOMERS_SUCCESS, GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS } from './ActionType';
 
 const registerRequest = () => ({type:REGISTER_REQUEST});
 const registerSuccess = (user) => ({type:REGISTER_SUCCESS,payload:user});
@@ -87,3 +87,25 @@ export const logout=()=> async(dispatch)=>{
     dispatch({type:LOGOUT,payload:null});
 }
 
+
+//  get user from token
+export const getAllCustomers = (token) => {
+    return async (dispatch) => {
+      console.log("jwt - ",token)
+      dispatch({ type: GET_ALL_CUSTOMERS_REQUEST });
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/admin/users`,{
+          headers:{
+            "Authorization":`Bearer ${token}`
+          }
+        });
+        const users = response.data;
+        dispatch({ type: GET_ALL_CUSTOMERS_SUCCESS, payload: users });
+        console.log("All Customers",users)
+      } catch (error) {
+        const errorMessage = error.message;
+        console.log(error)
+        dispatch({ type: GET_ALL_CUSTOMERS_FAILURE, payload: errorMessage });
+      }
+    };
+  };

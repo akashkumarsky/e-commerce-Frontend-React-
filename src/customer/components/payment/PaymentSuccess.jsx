@@ -53,36 +53,41 @@ const PaymentSuccess = () => {
       <OrderTracker activeStep={1}/>
 
       <Grid container className="space-y-5 py-5 pt-20">
-        {order.order?.orderItems.map((item) => (
-          <Grid
-            container
-            item
-            className="shadow-xl rounded-md p-5 border"
-            sx={{ alignItems: "center", justifyContent: "space-between" }}
-          >
-            <Grid item xs={6}>
-              {" "}
-              <div className="flex  items-center ">
-                <img
-                  className="w-[5rem] h-[5rem] object-cover object-top"
-                  src={item?.product.imageUrl}
-                  alt=""
-                />
-                <div className="ml-5 space-y-2">
-                  <p className="">{item.product.title}</p>
-                  <p className="opacity-50 text-xs font-semibold space-x-5">
-                    <span>Color: pink</span> <span>Size: {item.size}</span>
-                  </p>
-                  <p>Seller: {item.product.brand}</p>
-                  <p>₹{item.price}</p>
-                </div>
-              </div>
-            </Grid>
-            <Grid item>
-            <AddressCart address={order.order?.shippingAddress} />
-            </Grid>
-          </Grid>
-        ))}
+      {order?.order?.orderItems?.length > 0 ? (
+  order.order.orderItems.map((item) => (
+    <Grid
+      container
+      item
+      key={item.id} // Always add key when mapping
+      className="shadow-xl rounded-md p-5 border"
+      sx={{ alignItems: "center", justifyContent: "space-between" }}
+    >
+      <Grid item xs={6}>
+        <div className="flex items-center">
+          <img
+            className="w-[5rem] h-[5rem] object-cover object-top"
+            src={item?.product.imageUrl}
+            alt={item?.product.title || "Product"}
+          />
+          <div className="ml-5 space-y-2">
+            <p>{item?.product.title}</p>
+            <p className="opacity-50 text-xs font-semibold space-x-5">
+              <span>Color: pink</span> <span>Size: {item?.size}</span>
+            </p>
+            <p>Seller: {item?.product.brand}</p>
+            <p>₹{item?.price}</p>
+          </div>
+        </div>
+      </Grid>
+      <Grid item>
+        <AddressCart address={order?.order?.shippingAddress} />
+      </Grid>
+    </Grid>
+  ))
+) : (
+  <p>Loading Order Details...</p> // Handle loading state
+)}
+
       </Grid>
     </div>
   );

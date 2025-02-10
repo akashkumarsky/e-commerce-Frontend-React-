@@ -35,11 +35,17 @@ const DeliveryAddressForm = ({ handleNext }) => {
     handleNext();
   };
 
-  const handleCreateOrder = (item) => {
-    dispatch(createOrder({ address: item, jwt, navigate }));
-    handleNext();
-  };
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const handleCreateOrder = (item) => {
+    if (isSubmitting) return; // Prevent duplicate requests
+    setIsSubmitting(true);
+  
+    dispatch(createOrder({ address: item, jwt, navigate }))
+      .finally(() => setIsSubmitting(false)); // Reset flag after request completes
+  };
+  
+  
 
 
 
